@@ -118,11 +118,12 @@
             padding: 15px;
             background-color: white;
             border-bottom: 1px solid #f0f0f0;
+            position: relative;
         }
         
         .search-bar {
             width: 100%;
-            padding: 12px 15px;
+            padding: 12px 45px 12px 15px;
             border: 1px solid #ddd;
             border-radius: 25px;
             font-size: 16px;
@@ -133,6 +134,20 @@
         .search-bar:focus {
             border-color: #007BFF;
             box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+        
+        .search-icon {
+            position: absolute;
+            right: 25px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .search-icon:hover {
+            color: #007BFF;
         }
         
         .category-buttons {
@@ -241,6 +256,27 @@
         .quantity-option:hover, .quantity-option.active {
             background: #55d21c;
             color: white;
+        }
+        
+        .custom-quantity {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+        
+        .custom-quantity-input {
+            width: 60px;
+            padding: 4px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            text-align: center;
+        }
+        
+        .custom-quantity-unit {
+            font-size: 12px;
+            color: #666;
         }
         
         .add-to-cart {
@@ -671,6 +707,7 @@
     
     <div class="search-container">
         <input type="text" class="search-bar" placeholder="Search products..." id="searchInput">
+        <i class="search-icon fas fa-search" id="searchIcon"></i>
     </div>
     
     <div class="category-buttons">
@@ -682,6 +719,10 @@
     
     <div class="products-container" id="productsContainer">
         <!-- Products will be loaded here dynamically -->
+    </div>
+    
+    <div class="hero-image">
+        <img src="mission.jpg" alt="Fresh Vegetables">
     </div>
     
     <button class="sticky-cart-btn" onclick="openCart()">
@@ -699,6 +740,7 @@
             <div class="cart-items" id="cartItems">
                 <!-- Cart items will be loaded here -->
             </div>
+         
             <div class="cart-total" id="cartTotal">
                 Total: ₹0
             </div>
@@ -793,6 +835,7 @@
             address: "49/9 Jorabagan Road, Kolkata, India, West Bengal",
             instagram: "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=seyxfz6",
             facebook: "https://www.facebook.com/sobjihaat?mibextid=ZbWKwL",
+            googleReview: "https://search.google.com/local/writereview?placeid=ChIJL6p5e5eWrjsR5Lr0-5a7JkQ",
             deliveryFee: 20,
             deliveryTime: "45-60 minutes",
             servicePincodes: ["700001", "700002", "700003", "700004", "700005", "700006", "700007", "700008", "700009", "700010"]
@@ -879,12 +922,10 @@
 
         // Quantity options in grams
         const QUANTITY_OPTIONS = [
-            { value: 0.1, label: "100g" },
-            { value: 0.25, label: "250g" },
-            { value: 0.5, label: "500g" },
-            { value: 1, label: "1kg" },
-            { value: 2.5, label: "2.5kg" },
-            { value: 5, label: "5kg" }
+            { label: "250g", value: 0.25 },
+            { label: "500g", value: 0.5 },
+            { label: "1kg", value: 1 },
+            { label: "2kg", value: 2 }
         ];
 
         // Cart state
@@ -899,6 +940,7 @@
         const cartTotal = document.getElementById('cartTotal');
         const cartCount = document.getElementById('cartCount');
         const searchInput = document.getElementById('searchInput');
+        const searchIcon = document.getElementById('searchIcon');
         const categoryButtons = document.querySelectorAll('.category-btn');
         const checkoutModal = document.getElementById('checkoutModal');
         const checkoutForm = document.getElementById('checkoutForm');
@@ -932,6 +974,14 @@
             // Search functionality
             searchInput.addEventListener('input', function() {
                 filterProducts(this.value);
+                updateSearchIcon();
+            });
+
+            // Search icon click
+            searchIcon.addEventListener('click', function() {
+                if (searchInput.value.trim() !== '') {
+                    filterProducts(searchInput.value);
+                }
             });
 
             // Close cart when clicking outside
@@ -959,6 +1009,23 @@
             document.getElementById('pincode').addEventListener('input', function() {
                 validatePincode(this.value);
             });
+        }
+
+        // Update search icon based on input
+        function updateSearchIcon() {
+            if (searchInput.value.trim() !== '') {
+                searchIcon.className = 'search-icon fas fa-times';
+                searchIcon.onclick = function() {
+                    searchInput.value = '';
+                    filterProducts('');
+                    updateSearchIcon();
+                };
+            } else {
+                searchIcon.className = 'search-icon fas fa-search';
+                searchIcon.onclick = function() {
+                    filterProducts(searchInput.value);
+                };
+            }
         }
 
         // Set active category
@@ -991,6 +1058,10 @@
                                     <div class="quantity-option" data-value="${option.value}" data-product="${product.id}">${option.label}</div>
                                 `).join('')}
                             </div>
+                            <div class="custom-quantity">
+                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.5" step="0.5" oninput="validateNumberInput(this)">
+                                <span class="custom-quantity-unit">kg</span>
+                            </div>
                         </div>
                         <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
                     </div>
@@ -1002,6 +1073,7 @@
             products.forEach(product => {
                 const optionsContainer = document.getElementById(`quantity-options-${product.id}`);
                 const options = optionsContainer.querySelectorAll('.quantity-option');
+                const customInput = document.getElementById(`custom-quantity-${product.id}`);
                 
                 options.forEach(option => {
                     option.addEventListener('click', function() {
@@ -1014,9 +1086,46 @@
                         // Store selected quantity
                         const quantity = parseFloat(this.getAttribute('data-value'));
                         selectedQuantities[product.id] = quantity;
+                        
+                        // Clear custom input
+                        customInput.value = '';
                     });
                 });
+                
+                // Add event listener for custom input
+                customInput.addEventListener('input', function() {
+                    const customValue = parseFloat(this.value);
+                    if (!isNaN(customValue) && customValue > 0) {
+                        // Remove active class from all preset options
+                        options.forEach(opt => opt.classList.remove('active'));
+                        
+                        // Store custom quantity
+                        selectedQuantities[product.id] = customValue;
+                    } else {
+                        selectedQuantities[product.id] = 0;
+                    }
+                });
             });
+        }
+
+        // Validate number input to allow only numbers
+        function validateNumberInput(input) {
+            // Remove any non-numeric characters except decimal point
+            input.value = input.value.replace(/[^0-9.]/g, '');
+            
+            // Ensure only one decimal point
+            if ((input.value.match(/\./g) || []).length > 1) {
+                input.value = input.value.substring(0, input.value.lastIndexOf('.'));
+            }
+            
+            // Ensure step of 0.5
+            const value = parseFloat(input.value);
+            if (!isNaN(value) && value > 0) {
+                // Round to nearest 0.5
+                const roundedValue = Math.round(value * 2) / 2;
+                input.value = roundedValue;
+                selectedQuantities[input.id.replace('custom-quantity-', '')] = roundedValue;
+            }
         }
 
         // Filter products based on search
@@ -1042,6 +1151,10 @@
                                     <div class="quantity-option" data-value="${option.value}" data-product="${product.id}">${option.label}</div>
                                 `).join('')}
                             </div>
+                            <div class="custom-quantity">
+                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.5" step="0.5" oninput="validateNumberInput(this)">
+                                <span class="custom-quantity-unit">kg</span>
+                            </div>
                         </div>
                         <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
                     </div>
@@ -1053,6 +1166,7 @@
             filteredProducts.forEach(product => {
                 const optionsContainer = document.getElementById(`quantity-options-${product.id}`);
                 const options = optionsContainer.querySelectorAll('.quantity-option');
+                const customInput = document.getElementById(`custom-quantity-${product.id}`);
                 
                 options.forEach(option => {
                     option.addEventListener('click', function() {
@@ -1065,7 +1179,24 @@
                         // Store selected quantity
                         const quantity = parseFloat(this.getAttribute('data-value'));
                         selectedQuantities[product.id] = quantity;
+                        
+                        // Clear custom input
+                        customInput.value = '';
                     });
+                });
+                
+                // Add event listener for custom input
+                customInput.addEventListener('input', function() {
+                    const customValue = parseFloat(this.value);
+                    if (!isNaN(customValue) && customValue > 0) {
+                        // Remove active class from all preset options
+                        options.forEach(opt => opt.classList.remove('active'));
+                        
+                        // Store custom quantity
+                        selectedQuantities[product.id] = customValue;
+                    } else {
+                        selectedQuantities[product.id] = 0;
+                    }
                 });
             });
         }
@@ -1115,6 +1246,12 @@
                 options.forEach(opt => opt.classList.remove('active'));
             }
             
+            // Clear custom input
+            const customInput = document.getElementById(`custom-quantity-${productId}`);
+            if (customInput) {
+                customInput.value = '';
+            }
+            
             // Update cart
             updateCartCount();
             showNotification(`${product.name} added to cart`);
@@ -1161,9 +1298,9 @@
                         <div class="cart-item-price">₹${item.price}/kg × ${item.quantity}kg = ₹${itemTotal.toFixed(2)}</div>
                     </div>
                     <div class="cart-item-actions">
-                        <button class="quantity-btn minus" onclick="updateCartItemQuantity(${item.id}, -0.1)">-</button>
+                        <button class="quantity-btn minus" onclick="updateCartItemQuantity(${item.id}, -0.5)">-</button>
                         <span class="quantity">${item.quantity}kg</span>
-                        <button class="quantity-btn plus" onclick="updateCartItemQuantity(${item.id}, 0.1)">+</button>
+                        <button class="quantity-btn plus" onclick="updateCartItemQuantity(${item.id}, 0.5)">+</button>
                         <button class="quantity-btn remove" onclick="removeFromCart(${item.id})" style="background: #e74c3c;">
                             <i class="fas fa-trash"></i>
                         </button>
@@ -1417,8 +1554,7 @@
         }
 
         function openGoogleReview() {
-            // This would be your actual Google Maps review link
-            window.open('https://search.google.com/local/writereview?placeid=YOUR_PLACE_ID', '_blank');
+            window.open(BUSINESS_INFO.googleReview, '_blank');
             closeReviewOfferModal();
         }
     </script>
