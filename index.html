@@ -150,14 +150,49 @@
             color: #007BFF;
         }
         
+        .category-section {
+            background-color: #55d21c;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 15px 15px 5px;
+        }
+        
+        .category-images {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 10px;
+        }
+        
+        .category-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            cursor: pointer;
+            border: 3px solid #fdf900;
+            transition: all 0.3s ease;
+        }
+        
+        .category-image:hover {
+            transform: scale(1.1);
+            border-color: #fb1302;
+        }
+        
+        .category-image.active {
+            border-color: #fb1302;
+            box-shadow: 0 0 10px rgba(251, 19, 2, 0.5);
+        }
+        
+        .category-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
         .category-buttons {
             display: flex;
             flex-wrap: wrap;
             justify-content: center;
             gap: 10px;
-            padding: 15px;
-            background-color: #55d21c;
-            border-bottom: 1px solid #f0f0f0;
         }
         
         .category-btn {
@@ -167,11 +202,11 @@
             padding: 12px 20px;
             border-radius: 8px;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
             flex: 1;
-            min-width: 100px;
+            min-width: 10px;
             text-align: center;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
@@ -186,10 +221,11 @@
             display: grid;
             grid-template-columns: repeat(3, 1fr);
             gap: 15px;
+            background-color: #55d21c;
         }
         
         .product-card {
-            background: white;
+            background: #55d21c;
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
@@ -710,11 +746,27 @@
         <i class="search-icon fas fa-search" id="searchIcon"></i>
     </div>
     
-    <div class="category-buttons">
-        <button class="category-btn active" data-category="indian">Indian</button>
-        <button class="category-btn" data-category="exotic">Exotic</button>
-        <button class="category-btn" data-category="leafy">Leafy</button>
-        <button class="category-btn" data-category="others">Others</button>
+    <div class="category-section">
+        <div class="category-images">
+            <div class="category-image active" data-category="indian" onclick="toggleCategory('indian')">
+                <img src="https://cdn.pixabay.com/photo/2016/03/05/19/02/broccoli-1238250_1280.jpg" alt="Indian Vegetables">
+            </div>
+            <div class="category-image" data-category="exotic" onclick="toggleCategory('exotic')">
+                <img src="https://cdn.pixabay.com/photo/2016/07/11/00/18/carrots-1508847_1280.jpg" alt="Exotic Vegetables">
+            </div>
+            <div class="category-image" data-category="leafy" onclick="toggleCategory('leafy')">
+                <img src="https://images.unsplash.com/photo-1576045057995-568f588f82fb?w=500&h=500&fit=crop" alt="Leafy Vegetables">
+            </div>
+            <div class="category-image" data-category="others" onclick="toggleCategory('others')">
+                <img src="https://cdn.pixabay.com/photo/2016/04/25/01/57/mushrooms-1351060_1280.jpg" alt="Other Products">
+            </div>
+        </div>
+        <div class="category-buttons">
+            <button class="category-btn active" data-category="indian" onclick="toggleCategory('indian')">Indian</button>
+            <button class="category-btn" data-category="exotic" onclick="toggleCategory('exotic')">Exotic</button>
+            <button class="category-btn" data-category="leafy" onclick="toggleCategory('leafy')">Leafy</button>
+            <button class="category-btn" data-category="others" onclick="toggleCategory('others')">Others</button>
+        </div>
     </div>
     
     <div class="products-container" id="productsContainer">
@@ -845,7 +897,7 @@
         const PRODUCTS = {
             indian: [
                 { id: 1, name: "Lemon", price: 20, image: "https://images.unsplash.com/photo-1568569350062-ebfa3cb195df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" },
-                { id: 2, name: "Gondhoraj Lemon", price: 40, image: "https://images.unsplash.com/photo-1568569350062-ebfa3cb195df?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" },
+                { id: 2, name: "Gondhoraj Lemon", price: 40, image: "data:image/jpeg;base64,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" },
                 { id: 3, name: "Coconut", price: 50, image: "https://images.pexels.com/photos/7676718/pexels-photo-7676718.jpeg?auto=compress&cs=tinysrgb&w=500" },
                 { id: 4, name: "Banana Leaf", price: 10, image: "https://media.istockphoto.com/id/157479249/photo/green-banana-leaf-isolated-on-white-with-clipping-path.jpg?s=612x612&w=0&k=20&c=632RKhMCKgbb8w4ZT9yS7Iw3E2vsRM_L_GgTbVng7XI=" },
                 { id: 5, name: "Green Chilli", price: 30, image: "https://media.istockphoto.com/id/182837666/photo/green-chillis-for-sale-at-the-market.jpg?s=612x612&w=0&k=20&c=cI7UOIK8NEy6oRtxXIk_L3D1uyu937tBSJnKBwsNYts=" },
@@ -932,6 +984,7 @@
         let cart = [];
         let currentCategory = 'indian';
         let selectedQuantities = {};
+        let productsVisible = true;
 
         // DOM elements
         const productsContainer = document.getElementById('productsContainer');
@@ -942,6 +995,7 @@
         const searchInput = document.getElementById('searchInput');
         const searchIcon = document.getElementById('searchIcon');
         const categoryButtons = document.querySelectorAll('.category-btn');
+        const categoryImages = document.querySelectorAll('.category-image');
         const checkoutModal = document.getElementById('checkoutModal');
         const checkoutForm = document.getElementById('checkoutForm');
         const billingSummary = document.getElementById('billingSummary');
@@ -966,8 +1020,7 @@
             categoryButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const category = this.getAttribute('data-category');
-                    setActiveCategory(category);
-                    loadProducts(category);
+                    toggleCategory(category);
                 });
             });
 
@@ -1028,14 +1081,39 @@
             }
         }
 
+        // Toggle category and product visibility
+        function toggleCategory(category) {
+            // If clicking the same category, toggle product visibility
+            if (category === currentCategory) {
+                productsVisible = !productsVisible;
+                productsContainer.style.display = productsVisible ? 'grid' : 'none';
+            } else {
+                // If clicking a different category, show products and switch category
+                productsVisible = true;
+                productsContainer.style.display = 'grid';
+                setActiveCategory(category);
+                loadProducts(category);
+            }
+        }
+
         // Set active category
         function setActiveCategory(category) {
+            // Update category buttons
             categoryButtons.forEach(button => {
                 button.classList.remove('active');
                 if (button.getAttribute('data-category') === category) {
                     button.classList.add('active');
                 }
             });
+            
+            // Update category images
+            categoryImages.forEach(image => {
+                image.classList.remove('active');
+                if (image.getAttribute('data-category') === category) {
+                    image.classList.add('active');
+                }
+            });
+            
             currentCategory = category;
         }
 
