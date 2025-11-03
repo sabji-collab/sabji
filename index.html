@@ -71,9 +71,9 @@
         
         .hero-image img {
             width: 100%;
-            height: auto; /* Changed from fixed height to auto */
-            max-height: 200px; /* Added max-height instead of fixed height */
-            object-fit: contain; /* Changed from cover to contain */
+            height: auto;
+            max-height: 200px;
+            object-fit: contain;
             display: block;
         }
         
@@ -88,9 +88,9 @@
         
         .mission-image img {
             width: 100%;
-            height: auto; /* Changed from fixed height to auto */
-            max-height: 250px; /* Added max-height instead of fixed height */
-            object-fit: contain; /* Changed from cover to contain */
+            height: auto;
+            max-height: 250px;
+            object-fit: contain;
             display: block;
         }
         
@@ -144,58 +144,62 @@
             transform: scale(1.1);
         }
         
-       /* Updated Services Section */
-.services-section {
-    background: linear-gradient(135deg, #8d6e63, #5d4037);
-    padding: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
+        /* Updated Services Section */
+        .services-section {
+            background: linear-gradient(135deg, #8d6e63, #5d4037);
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
 
-.services-title {
-    text-align: center;
-    color: white;
-    font-size: 16px;
-    margin-bottom: 5px;
-    font-weight: bold;
-}
+        .services-title {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
 
-.services-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 5px;
-    overflow-x: auto;
-    scrollbar-width: none;
-}
+        .services-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 5px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
 
-.services-container::-webkit-scrollbar { 
-    display: none;
-}
+        .services-container::-webkit-scrollbar { 
+            display: none;
+        }
 
-.service-card {
-    flex: 1;
-    min-width: 85px;
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: none; /* Remove animation */
-}
+        .service-card {
+            flex: 0 0 85px; /* Fixed width for all cards */
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
 
-.service-image {
-    width: 100%;
-    height: 60px;
-    object-fit: cover;
-}
+        .service-card:hover {
+            transform: translateY(-3px);
+        }
 
-.service-name {
-    padding: 6px 4px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-    color: #5d4037;
-    line-height: 1;
-}
+        .service-image {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+        }
+
+        .service-name {
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #5d4037;
+            line-height: 1;
+        }
         
         .search-container {
             padding: 15px;
@@ -601,6 +605,7 @@
             scroll-behavior: smooth;
             padding: 10px;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch; /* For smooth scrolling on iOS */
         }
         
         .review-container::-webkit-scrollbar { 
@@ -978,15 +983,8 @@
             margin-bottom: 10px;
         }
         
-        .admin-login {
-            background: #f5f9f5;
-            padding: 20px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-        }
-        
         .admin-dashboard {
-            display: none;
+            display: block; /* Changed from none to block */
         }
         
         .admin-tabs {
@@ -1234,6 +1232,107 @@
         .image-url-input {
             margin-top: 10px;
         }
+        
+        /* Admin Login Modal */
+        .admin-login-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .admin-login-content {
+            background: white;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+        }
+        
+        .admin-login-title {
+            font-size: 22px;
+            color: #2e7d32;
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        
+        .admin-login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .admin-login-input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        .admin-login-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        
+        .admin-login-btn:hover {
+            background: linear-gradient(135deg, #45a049, #1b5e20);
+        }
+        
+        .admin-back-home {
+            background: #f0f0f0;
+            color: #333;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+        }
+        
+        .admin-back-home:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Pincode Management */
+        .pincode-management {
+            margin-top: 20px;
+        }
+        
+        .pincode-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            background: #f9f9f9;
+            border-radius: 5px;
+            margin-bottom: 8px;
+        }
+        
+        .pincode-actions {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .pincode-charge {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -1241,7 +1340,7 @@
     <div class="main-app">
         <header>
             <nav>
-                <a href="#" class="nav-home" onclick="showHomePage()">HOME</a>
+                <a href="#" class="nav-home" id="homeButton" onmousedown="startHomePress()" onmouseup="endHomePress()" ontouchstart="startHomePress()" ontouchend="endHomePress()">HOME</a>
                 <a href="#" class="nav-about" onclick="showAboutPage()">ABOUT US</a>
             </nav>
         </header>
@@ -1272,23 +1371,22 @@
         <div class="services-section">
             <h3 class="services-title">Our Special Services</h3>
             <div class="services-container">
-                <div class="service-card">
+                <div class="service-card" onclick="openServiceWhatsApp('Restaurant Orders')">
                     <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Restaurant Orders" class="service-image">
                     <div class="service-name">Restaurant Orders</div>
                 </div>
-                <div class="service-card">
+                <div class="service-card" onclick="openServiceWhatsApp('Catering Orders')">
                     <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Catering Orders" class="service-image">
                     <div class="service-name">Catering Orders</div>
                 </div>
-                <div class="service-card">
+                <div class="service-card" onclick="openServiceWhatsApp('Special Occasions')">
                     <img src="https://images.unsplash.com/photo-1532634922-8fe0b757fb13?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Special Occasions" class="service-image">
                     <div class="service-name">Special Occasions</div>
                 </div>
-                <div class="service-card">
+                <div class="service-card" onclick="openServiceWhatsApp('Bulk Orders')">
                     <img src="https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJ1bGslMjBvcmRlciUyMHZlZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600" alt="Bulk Orders" class="service-image">
                     <div class="service-name">Bulk Orders</div>
                 </div>
-                
             </div>
         </div>
         
@@ -1383,8 +1481,8 @@
         </section>
 
         <footer>
-            <p>&copy; 2025 Sobji Haat. All rights reserved.</p>
-            <p>49/9 Jorabagan Road, Kolkata, West Bengal</p>
+            <p>&copy; 2025 Sabjihaat. All rights reserved.</p>
+            <p> Maa Bipodtarini Vegetables, Jadavpur Sandhya Bazar Road, Kolkata, West Bengal</p>
         </footer>
     </div>
     
@@ -1434,6 +1532,161 @@
             
             <h3>Our Story</h3>
             <p>Sobji Haat began as a small family business with a simple vision: to bridge the gap between local farmers and urban consumers. What started as a single vegetable cart has now grown into a trusted online platform serving hundreds of customers daily.</p>
+        </div>
+        
+        <button class="back-to-home" onclick="showHomePage()">Back to Home</button>
+    </div>
+    
+    <!-- Admin Login Modal -->
+    <div class="admin-login-modal" id="adminLoginModal">
+        <div class="admin-login-content">
+            <h2 class="admin-login-title">Admin Login</h2>
+            <form class="admin-login-form" id="adminLoginForm">
+                <input type="text" class="admin-login-input" id="adminUsername" placeholder="Username" required>
+                <input type="password" class="admin-login-input" id="adminPassword" placeholder="Password" required>
+                <button type="submit" class="admin-login-btn">Login</button>
+            </form>
+            <button class="admin-back-home" onclick="closeAdminLogin()">Back to Home</button>
+        </div>
+    </div>
+    
+    <!-- Admin Panel -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <h1 class="admin-title">Admin Panel</h1>
+        </div>
+        
+        <div class="admin-dashboard" id="adminDashboard">
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('products')">Products</button>
+                <button class="admin-tab" onclick="switchAdminTab('settings')">Settings</button>
+                <button class="admin-tab" onclick="switchAdminTab('pincodes')">Pincodes</button>
+            </div>
+            
+            <div class="admin-tab-content active" id="productsTab">
+                <div class="admin-search">
+                    <input type="text" id="adminProductSearch" placeholder="Search products..." oninput="filterAdminProducts()">
+                </div>
+                <div class="category-filter">
+                    <select id="adminCategoryFilter" onchange="filterAdminProducts()">
+                        <option value="all">All Categories</option>
+                        <option value="indian">Indian</option>
+                        <option value="exotic">Exotic</option>
+                        <option value="leafy">Leafy</option>
+                        <option value="others">Others</option>
+                    </select>
+                </div>
+                <div class="product-list" id="adminProductList">
+                    <!-- Admin product list will be loaded here -->
+                </div>
+                <button class="admin-btn save-btn" onclick="showAddProductForm()">Add New Product</button>
+                
+                <div class="add-product-form hidden" id="addProductForm">
+                    <h4>Add New Product</h4>
+                    <div class="form-row">
+                        <input type="text" id="newProductName" placeholder="Product Name">
+                        <input type="number" id="newProductPrice" placeholder="Price">
+                    </div>
+                    <div class="form-row">
+                        <select id="newProductCategory">
+                            <option value="indian">Indian</option>
+                            <option value="exotic">Exotic</option>
+                            <option value="leafy">Leafy</option>
+                            <option value="others">Others</option>
+                        </select>
+                        <select id="newProductUnit">
+                            <option value="kg">kg</option>
+                            <option value="piece">piece</option>
+                            <option value="bunch">bunch</option>
+                            <option value="packet">packet</option>
+                            <option value="tin">tin</option>
+                            <option value="bottle">bottle</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="newProductImage" placeholder="Image URL">
+                    </div>
+                    <div class="form-row">
+                        <button class="admin-btn save-btn" onclick="addNewProduct()">Save Product</button>
+                        <button class="admin-btn cancel-btn" onclick="hideAddProductForm()">Cancel</button>
+                    </div>
+                </div>
+                
+                <!-- Edit Product Form -->
+                <div class="edit-product-form hidden" id="editProductForm">
+                    <h4>Edit Product</h4>
+                    <div class="form-row">
+                        <input type="text" id="editProductName" placeholder="Product Name">
+                        <input type="number" id="editProductPrice" placeholder="Price">
+                    </div>
+                    <div class="form-row">
+                        <select id="editProductCategory">
+                            <option value="indian">Indian</option>
+                            <option value="exotic">Exotic</option>
+                            <option value="leafy">Leafy</option>
+                            <option value="others">Others</option>
+                        </select>
+                        <select id="editProductUnit">
+                            <option value="kg">kg</option>
+                            <option value="piece">piece</option>
+                            <option value="bunch">bunch</option>
+                            <option value="packet">packet</option>
+                            <option value="tin">tin</option>
+                            <option value="bottle">bottle</option>
+                        </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="text" id="editProductImage" placeholder="Image URL">
+                    </div>
+                    <div class="form-row">
+                        <button class="admin-btn save-btn" onclick="updateProduct()">Update Product</button>
+                        <button class="admin-btn cancel-btn" onclick="hideEditProductForm()">Cancel</button>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="admin-tab-content" id="settingsTab">
+                <div class="admin-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalProducts">0</div>
+                        <div class="stat-label">Total Products</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="totalOrders">0</div>
+                        <div class="stat-label">Total Orders</div>
+                    </div>
+                </div>
+                
+                <h4>Delivery Settings</h4>
+                <div class="form-group">
+                    <label>Default Delivery Charge (₹)</label>
+                    <input type="number" id="deliveryCharge" value="20">
+                </div>
+                <div class="form-group">
+                    <label>Free Delivery Minimum (₹)</label>
+                    <input type="number" id="freeDeliveryMin" value="999">
+                </div>
+                <button class="admin-btn save-btn" onclick="saveSettings()">Save Settings</button>
+            </div>
+            
+            <div class="admin-tab-content" id="pincodesTab">
+                <h4>Pincode Management</h4>
+                <div class="form-group">
+                    <label>Add New Pincode</label>
+                    <div class="form-row">
+                        <input type="text" id="newPincode" placeholder="Pincode" maxlength="6">
+                        <input type="number" id="newPincodeCharge" placeholder="Delivery Charge">
+                        <button class="admin-btn save-btn" onclick="addPincode()">Add</button>
+                    </div>
+                </div>
+                
+                <div class="pincode-management">
+                    <h5>Service Pincodes</h5>
+                    <div id="pincodeList">
+                        <!-- Pincodes will be loaded here -->
+                    </div>
+                </div>
+            </div>
         </div>
         
         <button class="back-to-home" onclick="showHomePage()">Back to Home</button>
@@ -1506,7 +1759,7 @@
                 <h2 class="modal-title">Special Offer!</h2>
                 <button class="close-modal" onclick="closeReviewOfferModal()">&times;</button>
             </div>
-            <img src="https://images.unsplash.com/photo-1570197788417-0e82375c9371?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="review-offer-image">
+            <img src="https://images.unsplash.com/photo-1592924357228-91a4daadcfea?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80" class="review-offer-image">
             <div class="offer-details">
                 <div class="offer-title">Get 5% Discount!</div>
                 <div class="offer-description">
@@ -1533,12 +1786,26 @@
         const BUSINESS_INFO = {
             name: "Sobji Haat",
             phone: "+919051410591",
-            address: "49/9 Jorabagan Road, Kolkata, India, West Bengal",
+            address: "Maa Bipodtarani Vegetable Store (Mbvs),Jadavpur Sandhya Bazar Rd, Kolkata, India, West Bengal-700032",
             instagram: "https://www.instagram.com/invites/contact/?utm_source=ig_contact_invite&utm_medium=copy_link&utm_content=seyxfz6",
             facebook: "https://www.facebook.com/sobjihaat?mibextid=ZbWKwL",
-            googleReview: "https://search.google.com/local/writereview?placeid=ChIJL6p5e5eWrjsR5Lr0-5a7JkQ",
+            googleReview: "https://maps.app.goo.gl/5WkjTSBhJLw5aA419",
             deliveryFee: 20,
-            servicePincodes: ["700001", "700002", "700003", "700004", "700005", "700006", "700007", "700008", "700009", "700010"]
+            servicePincodes: ["700047", "700045", "700075", "700094", "700084", "700092", "700040", "700040", "700068","700095","700032" ,"700031"],
+            pincodeCharges: {
+                "700047": 20,
+                "700045": 25,
+                "700075": 30,
+                "700094": 20,
+                "700084": 25,
+                "700092": 30,
+                "700040": 20,
+                "700068": 25,
+                "700031": 30,
+                "700095": 30, 
+                
+                "700032": 20
+            }
         };
 
         // Product data with categories and images
@@ -1555,8 +1822,8 @@
                 { id: 9, name: "Beans", price: 40, image: "https://cdn.pixabay.com/photo/2015/05/11/03/58/green-beans-761940_1280.jpg", unit: "kg" },
                 { id: 10, name: "Carrot", price: 35, image: "https://cdn.pixabay.com/photo/2016/07/11/00/18/carrots-1508847_1280.jpg", unit: "kg" },
                 { id: 11, name: "Tamarind", price: 80, image: "https://cdn.pixabay.com/photo/2023/11/08/05/16/tamarind-8373925_1280.jpg", unit: "kg" },
-                { id: 12, name: "Ginger", price: 120, image: "https://cdn.pixabay.com/photo/2020/04/29/12/39/ginger-5108759_1280.jpg", unit: "kg" },
-                { id: 13, name: "Garlic Whole", price: 150, image: "https://cdn.pixabay.com/photo/2014/11/25/13/48/garlic-545223_1280.jpg", unit: "kg" },
+                { id: 12, name: "Ginger", price: 120, image: "https://cdn.pixabay.com/photo-2020/04/29/12/39/ginger-5108759_1280.jpg", unit: "kg" },
+                { id: 13, name: "Garlic Whole", price: 150, image: "https://cdn.pixabay.com/photo-2014/11/25/13/48/garlic-545223_1280.jpg", unit: "kg" },
                 { id: 14, name: "Cucumber", price: 20, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuS3B37HDFWyYVflnzf25xrHpoahLScsaFEeAGXvvG2XNO1UCiaWxqky3Xrx7c1sjpHkukjvlxHDy7OWBGGdFmqVQ5JEoT9vb4H-DwQA&s=10", unit: "kg" },
                 { id: 15, name: "Tomato", price: 30, image: "https://cdn.pixabay.com/photo/2019/07/11/10/14/cherry-tomato-4330441_1280.jpg", unit: "kg" },
                 { id: 16, name: "Onion", price: 40, image: "https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg" },
@@ -1655,6 +1922,8 @@
         let productsVisible = true;
         let editingProductId = null;
         let homeClickCount = 0;
+        let homePressTimer = null;
+        let reviewsScrollInterval = null;
 
         // DOM elements
         const productsContainer = document.getElementById('productsContainer');
@@ -1671,32 +1940,40 @@
         const billingSummary = document.getElementById('billingSummary');
         const reviewOfferModal = document.getElementById('reviewOfferModal');
         const notification = document.getElementById('notification');
+        const adminLoginModal = document.getElementById('adminLoginModal');
+        const adminPanel = document.getElementById('adminPanel');
+        const adminDashboard = document.getElementById('adminDashboard');
+        const adminLoginForm = document.getElementById('adminLoginForm');
+
+        // Admin credentials
+        const ADMIN_CREDENTIALS = {
+            username: "admin",
+            password: "sobjihaat2025"
+        };
 
         // Page navigation functions
         function showHomePage() {
             document.querySelector('.main-app').style.display = 'block';
             document.getElementById('aboutPage').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'none';
-            
-            // Track home button clicks for admin access
-            homeClickCount++;
-            if (homeClickCount >= 5) {
-                showAdminPanel();
-                homeClickCount = 0;
-                showNotification('Admin panel accessed');
-            }
+            closeAdminLogin();
         }
         
         function showAboutPage() {
             document.querySelector('.main-app').style.display = 'none';
             document.getElementById('aboutPage').style.display = 'block';
             document.getElementById('adminPanel').style.display = 'none';
+            closeAdminLogin();
         }
         
         function showAdminPanel() {
             document.querySelector('.main-app').style.display = 'none';
             document.getElementById('aboutPage').style.display = 'none';
             document.getElementById('adminPanel').style.display = 'block';
+            closeAdminLogin();
+            loadAdminProducts();
+            loadAdminSettings();
+            loadPincodes();
         }
         
         // Initialize the app
@@ -1713,11 +1990,10 @@
             // Initialize reviews slider
             initReviewsSlider();
             
-            // Initialize services section auto-scroll
-            initServicesScroll();
+            // Start auto-scrolling reviews
+            startReviewsAutoScroll();
         });
         
-       
         // Set up event listeners
         function setupEventListeners() {
             // Category buttons
@@ -1762,9 +2038,30 @@
                 }
             });
 
+            // Close admin login modal when clicking outside
+            adminLoginModal.addEventListener('click', function(e) {
+                if (e.target === adminLoginModal) {
+                    closeAdminLogin();
+                }
+            });
+
             // Pincode validation
             document.getElementById('pincode').addEventListener('input', function() {
                 validatePincode(this.value);
+            });
+
+            // Admin login form
+            adminLoginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                const username = document.getElementById('adminUsername').value;
+                const password = document.getElementById('adminPassword').value;
+                
+                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                    showAdminPanel();
+                    showNotification('Admin login successful');
+                } else {
+                    showNotification('Invalid credentials', 'error');
+                }
             });
         }
 
@@ -2235,6 +2532,9 @@
         function validatePincode(pincode) {
             if (pincode.length === 6) {
                 if (BUSINESS_INFO.servicePincodes.includes(pincode)) {
+                    // Update delivery fee based on pincode
+                    const deliveryFee = BUSINESS_INFO.pincodeCharges[pincode] || BUSINESS_INFO.deliveryFee;
+                    BUSINESS_INFO.deliveryFee = deliveryFee;
                     showNotification('Delivery available in your area', 'success');
                     return true;
                 } else {
@@ -2387,6 +2687,38 @@
             countUp();
         }
 
+        // Start auto-scrolling reviews
+        function startReviewsAutoScroll() {
+            const reviewContainer = document.getElementById('reviewContainer');
+            let scrollPosition = 0;
+            const scrollStep = 1;
+            const scrollSpeed = 30; // milliseconds
+            
+            reviewsScrollInterval = setInterval(() => {
+                scrollPosition += scrollStep;
+                reviewContainer.scrollLeft = scrollPosition;
+                
+                // Reset scroll position when reaching the end
+                if (scrollPosition >= reviewContainer.scrollWidth - reviewContainer.clientWidth) {
+                    scrollPosition = 0;
+                    // Small delay before restarting
+                    setTimeout(() => {
+                        reviewContainer.scrollLeft = 0;
+                    }, 1000);
+                }
+            }, scrollSpeed);
+            
+            // Pause auto-scroll on hover
+            reviewContainer.addEventListener('mouseenter', () => {
+                clearInterval(reviewsScrollInterval);
+            });
+            
+            // Resume auto-scroll when mouse leaves
+            reviewContainer.addEventListener('mouseleave', () => {
+                startReviewsAutoScroll();
+            });
+        }
+
         // Social media functions
         function openWhatsApp() {
             window.open(`https://wa.me/${BUSINESS_INFO.phone.replace('+', '')}`, '_blank');
@@ -2403,6 +2735,332 @@
         function openGoogleReview() {
             window.open("https://share.google.com/WRprLUwj9uriDWCT1", '_blank');
             closeReviewOfferModal();
+        }
+
+        // Services section functions
+        function openServiceWhatsApp(serviceType) {
+            const message = `Hello Sobji Haat! I'm interested in your ${serviceType} service. Please provide me with more details.`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/${BUSINESS_INFO.phone.replace('+', '')}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Admin functions
+        function startHomePress() {
+            homePressTimer = setTimeout(function() {
+                openAdminLogin();
+            }, 10000); // 10 seconds
+        }
+
+        function endHomePress() {
+            if (homePressTimer) {
+                clearTimeout(homePressTimer);
+                homePressTimer = null;
+            }
+        }
+
+        function openAdminLogin() {
+            adminLoginModal.style.display = 'flex';
+        }
+
+        function closeAdminLogin() {
+            adminLoginModal.style.display = 'none';
+            document.getElementById('adminUsername').value = '';
+            document.getElementById('adminPassword').value = '';
+        }
+
+        function switchAdminTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.admin-tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all tab buttons
+            document.querySelectorAll('.admin-tab').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + 'Tab').classList.add('active');
+            
+            // Add active class to clicked tab button
+            event.target.classList.add('active');
+        }
+
+        function loadAdminProducts() {
+            const productList = document.getElementById('adminProductList');
+            productList.innerHTML = '';
+            
+            let totalProducts = 0;
+            
+            for (const category in PRODUCTS) {
+                PRODUCTS[category].forEach(product => {
+                    totalProducts++;
+                    const productItem = document.createElement('div');
+                    productItem.className = 'admin-product-item';
+                    productItem.innerHTML = `
+                        <div class="admin-product-info">
+                            <div class="admin-product-name">${product.name}</div>
+                            <div class="admin-product-details">₹${product.price}/${product.unit} | ${category}</div>
+                        </div>
+                        <div class="admin-product-actions">
+                            <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                            <button class="admin-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                        </div>
+                    `;
+                    productList.appendChild(productItem);
+                });
+            }
+            
+            document.getElementById('totalProducts').textContent = totalProducts;
+        }
+
+        function filterAdminProducts() {
+            const searchTerm = document.getElementById('adminProductSearch').value.toLowerCase();
+            const categoryFilter = document.getElementById('adminCategoryFilter').value;
+            
+            const productList = document.getElementById('adminProductList');
+            productList.innerHTML = '';
+            
+            let totalProducts = 0;
+            
+            for (const category in PRODUCTS) {
+                if (categoryFilter !== 'all' && categoryFilter !== category) continue;
+                
+                PRODUCTS[category].forEach(product => {
+                    if (product.name.toLowerCase().includes(searchTerm)) {
+                        totalProducts++;
+                        const productItem = document.createElement('div');
+                        productItem.className = 'admin-product-item';
+                        productItem.innerHTML = `
+                            <div class="admin-product-info">
+                                <div class="admin-product-name">${product.name}</div>
+                                <div class="admin-product-details">₹${product.price}/${product.unit} | ${category}</div>
+                            </div>
+                            <div class="admin-product-actions">
+                                <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                                <button class="admin-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                            </div>
+                        `;
+                        productList.appendChild(productItem);
+                    }
+                });
+            }
+            
+            document.getElementById('totalProducts').textContent = totalProducts;
+        }
+
+        function loadAdminSettings() {
+            document.getElementById('deliveryCharge').value = BUSINESS_INFO.deliveryFee;
+            document.getElementById('freeDeliveryMin').value = 999; // Default value
+        }
+
+        function saveSettings() {
+            const deliveryCharge = parseInt(document.getElementById('deliveryCharge').value);
+            const freeDeliveryMin = parseInt(document.getElementById('freeDeliveryMin').value);
+            
+            BUSINESS_INFO.deliveryFee = deliveryCharge;
+            
+            // In a real app, you would save these to a database
+            showNotification('Settings saved successfully');
+        }
+
+        function showAddProductForm() {
+            document.getElementById('addProductForm').classList.remove('hidden');
+        }
+
+        function hideAddProductForm() {
+            document.getElementById('addProductForm').classList.add('hidden');
+            // Clear form
+            document.getElementById('newProductName').value = '';
+            document.getElementById('newProductPrice').value = '';
+            document.getElementById('newProductImage').value = '';
+        }
+
+        function addNewProduct() {
+            const name = document.getElementById('newProductName').value;
+            const price = parseInt(document.getElementById('newProductPrice').value);
+            const category = document.getElementById('newProductCategory').value;
+            const unit = document.getElementById('newProductUnit').value;
+            const image = document.getElementById('newProductImage').value;
+            
+            if (!name || !price || !image) {
+                showNotification('Please fill all fields', 'error');
+                return;
+            }
+            
+            // Generate a new ID
+            const newId = Math.max(...Object.values(PRODUCTS).flat().map(p => p.id)) + 1;
+            
+            // Add product to the appropriate category
+            PRODUCTS[category].push({
+                id: newId,
+                name: name,
+                price: price,
+                image: image,
+                unit: unit
+            });
+            
+            // Reload products
+            loadAdminProducts();
+            hideAddProductForm();
+            showNotification('Product added successfully');
+        }
+
+        function editProduct(productId) {
+            // Find product
+            let product = null;
+            let productCategory = null;
+            
+            for (const category in PRODUCTS) {
+                product = PRODUCTS[category].find(p => p.id === productId);
+                if (product) {
+                    productCategory = category;
+                    break;
+                }
+            }
+            
+            if (!product) return;
+            
+            // Fill edit form
+            document.getElementById('editProductName').value = product.name;
+            document.getElementById('editProductPrice').value = product.price;
+            document.getElementById('editProductCategory').value = productCategory;
+            document.getElementById('editProductUnit').value = product.unit;
+            document.getElementById('editProductImage').value = product.image;
+            
+            // Store editing product ID
+            editingProductId = productId;
+            
+            // Show edit form
+            document.getElementById('editProductForm').classList.remove('hidden');
+        }
+
+        function hideEditProductForm() {
+            document.getElementById('editProductForm').classList.add('hidden');
+            editingProductId = null;
+        }
+
+        function updateProduct() {
+            if (!editingProductId) return;
+            
+            const name = document.getElementById('editProductName').value;
+            const price = parseInt(document.getElementById('editProductPrice').value);
+            const category = document.getElementById('editProductCategory').value;
+            const unit = document.getElementById('editProductUnit').value;
+            const image = document.getElementById('editProductImage').value;
+            
+            if (!name || !price || !image) {
+                showNotification('Please fill all fields', 'error');
+                return;
+            }
+            
+            // Find and update product
+            for (const cat in PRODUCTS) {
+                const index = PRODUCTS[cat].findIndex(p => p.id === editingProductId);
+                if (index !== -1) {
+                    // Remove from old category
+                    PRODUCTS[cat].splice(index, 1);
+                    break;
+                }
+            }
+            
+            // Add to new category
+            PRODUCTS[category].push({
+                id: editingProductId,
+                name: name,
+                price: price,
+                image: image,
+                unit: unit
+            });
+            
+            // Reload products
+            loadAdminProducts();
+            hideEditProductForm();
+            showNotification('Product updated successfully');
+        }
+
+        function deleteProduct(productId) {
+            if (confirm('Are you sure you want to delete this product?')) {
+                // Find and remove product
+                for (const category in PRODUCTS) {
+                    const index = PRODUCTS[category].findIndex(p => p.id === productId);
+                    if (index !== -1) {
+                        PRODUCTS[category].splice(index, 1);
+                        break;
+                    }
+                }
+                
+                // Reload products
+                loadAdminProducts();
+                showNotification('Product deleted successfully');
+            }
+        }
+
+        // Pincode management functions
+        function loadPincodes() {
+            const pincodeList = document.getElementById('pincodeList');
+            pincodeList.innerHTML = '';
+            
+            BUSINESS_INFO.servicePincodes.forEach(pincode => {
+                const charge = BUSINESS_INFO.pincodeCharges[pincode] || BUSINESS_INFO.deliveryFee;
+                const pincodeItem = document.createElement('div');
+                pincodeItem.className = 'pincode-item';
+                pincodeItem.innerHTML = `
+                    <div>
+                        <strong>${pincode}</strong>
+                        <div>Delivery Charge: ₹${charge}</div>
+                    </div>
+                    <div class="pincode-actions">
+                        <input type="number" class="pincode-charge" value="${charge}" onchange="updatePincodeCharge('${pincode}', this.value)">
+                        <button class="admin-btn delete-btn" onclick="removePincode('${pincode}')">Remove</button>
+                    </div>
+                `;
+                pincodeList.appendChild(pincodeItem);
+            });
+        }
+
+        function addPincode() {
+            const newPincode = document.getElementById('newPincode').value;
+            const newCharge = parseInt(document.getElementById('newPincodeCharge').value);
+            
+            if (!newPincode || newPincode.length !== 6) {
+                showNotification('Please enter a valid 6-digit pincode', 'error');
+                return;
+            }
+            
+            if (BUSINESS_INFO.servicePincodes.includes(newPincode)) {
+                showNotification('Pincode already exists', 'error');
+                return;
+            }
+            
+            BUSINESS_INFO.servicePincodes.push(newPincode);
+            BUSINESS_INFO.pincodeCharges[newPincode] = newCharge;
+            
+            // Clear form
+            document.getElementById('newPincode').value = '';
+            document.getElementById('newPincodeCharge').value = '';
+            
+            // Reload pincodes
+            loadPincodes();
+            showNotification('Pincode added successfully');
+        }
+
+        function updatePincodeCharge(pincode, charge) {
+            BUSINESS_INFO.pincodeCharges[pincode] = parseInt(charge);
+            showNotification('Delivery charge updated');
+        }
+
+        function removePincode(pincode) {
+            if (confirm('Are you sure you want to remove this pincode?')) {
+                const index = BUSINESS_INFO.servicePincodes.indexOf(pincode);
+                if (index !== -1) {
+                    BUSINESS_INFO.servicePincodes.splice(index, 1);
+                    delete BUSINESS_INFO.pincodeCharges[pincode];
+                    loadPincodes();
+                    showNotification('Pincode removed successfully');
+                }
+            }
         }
     </script>
 </body>
