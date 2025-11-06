@@ -148,60 +148,158 @@
         /* Updated Services Section */
 /* Updated Services Section - Single Row */
 /* Updated Services Section */
-.services-section {
-    background: linear-gradient(135deg, #8d6e63, #5d4037);
-    padding: 15px;
-    border-bottom: 1px solid #f0f0f0;
-}
+ /* Updated Services Section with Animation */
+        .services-section {
+            background: linear-gradient(135deg, #8d6e63, #5d4037);
+            padding: 15px;
+            border-bottom: 1px solid #f0f0f0;
+            position: relative;
+            overflow: hidden;
+        }
 
-.services-title {
-    text-align: center;
-    color: white;
-    font-size: 16px;
-    margin-bottom: 10px;
-    font-weight: bold;
-}
+        .services-title {
+            text-align: center;
+            color: white;
+            font-size: 16px;
+            margin-bottom: 10px;
+            font-weight: bold;
+        }
 
-.services-container {
-    display: flex;
-    justify-content: space-between;
-    gap: 10px;
-    padding: 5px;
-    overflow: visible; /* Changed from auto to visible */
-}
+        .services-subtitle {
+            text-align: center;
+            color: rgba(255, 255, 255, 0.8);
+            font-size: 12px;
+            margin-bottom: 15px;
+        }
 
-.service-card {
-    flex: 1; /* Changed from fixed width to flexible */
-    background: rgba(255, 255, 255, 0.9);
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-    transition: transform 0.3s ease;
-    cursor: pointer;
-    min-width: 0; /* Important for flex items to shrink properly */
-}
+        .services-container-wrapper {
+            position: relative;
+            overflow: hidden;
+            padding: 5px 0;
+        }
 
-.service-card:hover {
-    transform: translateY(-3px);
-}
+        .services-container {
+            display: flex;
+            gap: 10px;
+            padding: 5px;
+            transition: transform 0.5s ease-in-out;
+            width: max-content;
+        }
 
-.service-image {
-    width: 100%;
-    height: 60px;
-    object-fit: cover;
-}
+        .service-card {
+            flex: 0 0 80px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            animation: fadeInUp 0.6s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
 
-.service-name {
-    padding: 6px 4px;
-    text-align: center;
-    font-size: 11px;
-    font-weight: bold;
-    color: #5d4037;
-    line-height: 1;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}    
+        .service-card:nth-child(1) { animation-delay: 0.1s; }
+        .service-card:nth-child(2) { animation-delay: 0.2s; }
+        .service-card:nth-child(3) { animation-delay: 0.3s; }
+        .service-card:nth-child(4) { animation-delay: 0.4s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+
+        .service-image {
+            width: 100%;
+            height: 60px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .service-card:hover .service-image {
+            transform: scale(1.1);
+        }
+
+        .service-name {
+            padding: 6px 4px;
+            text-align: center;
+            font-size: 11px;
+            font-weight: bold;
+            color: #5d4037;
+            line-height: 1;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        /* Navigation arrows */
+        .services-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.8);
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 10;
+            transition: all 0.3s ease;
+            opacity: 0.7;
+        }
+
+        .services-nav:hover {
+            background: white;
+            opacity: 1;
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .services-nav.prev {
+            left: 5px;
+        }
+
+        .services-nav.next {
+            right: 5px;
+        }
+
+        .services-nav i {
+            color: #5d4037;
+            font-size: 14px;
+        }
+
+        /* Dots indicator */
+        .services-dots {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .services-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .services-dot.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+
         .search-container {
             padding: 15px;
             background-color: white;
@@ -1371,28 +1469,45 @@
         <!-- NEW SERVICES SECTION -->
         <!-- UPDATED SERVICES SECTION -->
 <!-- UPDATED SERVICES SECTION - SINGLE ROW -->
-<div class="services-section">
-    <h3 class="services-title">Our Special Services</h3>
-    <p class="services-subtitle">Click any service to contact owner directly via WhatsApp</p>
-    <div class="services-container">
-        <div class="service-card" onclick="openServiceWhatsApp('Restaurant Orders')">
-            <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Restaurant Orders" class="service-image">
-            <div class="service-name">Restaurant Orders</div>
+<!-- UPDATED SERVICES SECTION WITH ANIMATION -->
+        <div class="services-section">
+            <h3 class="services-title">Our Special Services</h3>
+            <p class="services-subtitle">Click any service to contact owner directly via WhatsApp</p>
+            
+            <div class="services-container-wrapper">
+                <button class="services-nav prev" onclick="slideServices('prev')">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                
+                <div class="services-container" id="servicesContainer">
+                    <div class="service-card" onclick="openServiceWhatsApp('Restaurant Orders')">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Restaurant Orders" class="service-image">
+                        <div class="service-name">Restaurant Orders</div>
+                    </div>
+                    <div class="service-card" onclick="openServiceWhatsApp('Catering Orders')">
+                        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Catering Orders" class="service-image">
+                        <div class="service-name">Catering Orders</div>
+                    </div>
+                    <div class="service-card" onclick="openServiceWhatsApp('Special Occasions')">
+                        <img src="https://cdn.pixabay.com/photo/2023/11/03/16/19/celebration-8363367_1280.jpg" alt="Special Occasions" class="service-image">
+                        <div class="service-name">Special Occasions</div>
+                    </div>
+                    <div class="service-card" onclick="openServiceWhatsApp('Bulk Orders')">
+                        <img src="https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJ1bGslMjBvcmRlciUyMHZlZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600" alt="Bulk Orders" class="service-image">
+                        <div class="service-name">Bulk Orders</div>
+                    </div>
+                </div>
+                
+                <button class="services-nav next" onclick="slideServices('next')">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="services-dots" id="servicesDots">
+                <!-- Dots will be generated by JavaScript -->
+            </div>
         </div>
-        <div class="service-card" onclick="openServiceWhatsApp('Catering Orders')">
-            <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Catering Orders" class="service-image">
-            <div class="service-name">Catering Orders</div>
-        </div>
-        <div class="service-card" onclick="openServiceWhatsApp('Special Occasions')">
-            <img src="https://cdn.pixabay.com/photo/2023/11/03/16/19/celebration-8363367_1280.jpg" alt="Special Occasions" class="service-image">
-            <div class="service-name">Special Occasions</div>
-        </div>
-        <div class="service-card" onclick="openServiceWhatsApp('Bulk Orders')">
-            <img src="https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJ1bGslMjBvcmRlciUyMHZlZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600" alt="Bulk Orders" class="service-image">
-            <div class="service-name">Bulk Orders</div>
-        </div>
-    </div>
-</div>
+
         
         <div class="search-container">
             <input type="text" class="search-bar" placeholder="Search products..." id="searchInput">
@@ -3074,6 +3189,110 @@
                 }
             }
         }
+        // Services animation variables
+        let servicesCurrentSlide = 0;
+        let servicesTotalSlides = 0;
+        let servicesAutoSlideInterval;
+        const servicesSlideWidth = 90; // Width of each service card + gap
+        
+        // Initialize services slider
+        function initServicesSlider() {
+            const servicesContainer = document.getElementById('servicesContainer');
+            const serviceCards = servicesContainer.querySelectorAll('.service-card');
+            servicesTotalSlides = Math.max(0, serviceCards.length - 4); // 4 cards visible at a time
+            
+            // Create dots
+            createServicesDots();
+            
+            // Start auto sliding
+            startServicesAutoSlide();
+            
+            // Pause auto slide on hover
+            servicesContainer.addEventListener('mouseenter', () => {
+                clearInterval(servicesAutoSlideInterval);
+            });
+            
+            // Resume auto slide when mouse leaves
+            servicesContainer.addEventListener('mouseleave', () => {
+                startServicesAutoSlide();
+            });
+        }
+        
+        // Create dots for services slider
+        function createServicesDots() {
+            const dotsContainer = document.getElementById('servicesDots');
+            dotsContainer.innerHTML = '';
+            
+            for (let i = 0; i <= servicesTotalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = `services-dot ${i === 0 ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    goToServicesSlide(i);
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        // Slide services
+        function slideServices(direction) {
+            if (direction === 'next') {
+                servicesCurrentSlide = Math.min(servicesCurrentSlide + 1, servicesTotalSlides);
+            } else {
+                servicesCurrentSlide = Math.max(servicesCurrentSlide - 1, 0);
+            }
+            
+            updateServicesSlider();
+        }
+        
+        // Go to specific slide
+        function goToServicesSlide(slideIndex) {
+            servicesCurrentSlide = slideIndex;
+            updateServicesSlider();
+        }
+        
+        // Update services slider position
+        function updateServicesSlider() {
+            const servicesContainer = document.getElementById('servicesContainer');
+            const translateX = -servicesCurrentSlide * servicesSlideWidth;
+            servicesContainer.style.transform = `translateX(${translateX}px)`;
+            
+            // Update active dot
+            const dots = document.querySelectorAll('.services-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === servicesCurrentSlide);
+            });
+            
+            // Reset auto slide timer
+            resetServicesAutoSlide();
+        }
+        
+        // Start auto sliding for services
+        function startServicesAutoSlide() {
+            servicesAutoSlideInterval = setInterval(() => {
+                if (servicesCurrentSlide >= servicesTotalSlides) {
+                    servicesCurrentSlide = 0;
+                } else {
+                    servicesCurrentSlide++;
+                }
+                updateServicesSlider();
+            }, 4000); // Change slide every 4 seconds
+        }
+        
+        // Reset auto slide timer
+        function resetServicesAutoSlide() {
+            clearInterval(servicesAutoSlideInterval);
+            startServicesAutoSlide();
+        }
+        
+        // Initialize services slider when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            // Previous initialization code...
+            
+            // Initialize services slider
+            initServicesSlider();
+        });
+        
+
     </script>
 </body>
 </html>
