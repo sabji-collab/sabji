@@ -144,14 +144,10 @@
             transform: scale(1.1);
         }
         
-        /* Updated Services Section */
-        /* Updated Services Section */
-/* Updated Services Section - Single Row */
-/* Updated Services Section */
- /* Updated Services Section with Animation */
+        /* UPDATED SERVICES SECTION - MOBILE OPTIMIZED WITH FIXED ALIGNMENT */
         .services-section {
             background: linear-gradient(135deg, #8d6e63, #5d4037);
-            padding: 15px;
+            padding: 15px 0;
             border-bottom: 1px solid #f0f0f0;
             position: relative;
             overflow: hidden;
@@ -160,83 +156,70 @@
         .services-title {
             text-align: center;
             color: white;
-            font-size: 16px;
-            margin-bottom: 10px;
+            font-size: 18px;
+            margin-bottom: 8px;
             font-weight: bold;
+            padding: 0 15px;
         }
 
         .services-subtitle {
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 12px;
+            font-size: 13px;
             margin-bottom: 15px;
+            padding: 0 15px;
         }
 
         .services-container-wrapper {
             position: relative;
             overflow: hidden;
-            padding: 5px 0;
+            width: 100%;
+            height: 220px; /* Fixed height for mobile */
         }
 
         .services-container {
             display: flex;
-            gap: 10px;
-            padding: 5px;
+            height: 100%;
             transition: transform 0.5s ease-in-out;
-            width: max-content;
+            width: 100%;
         }
 
         .service-card {
-            flex: 0 0 80px;
-            background: rgba(255, 255, 255, 0.9);
-            border-radius: 8px;
+            flex: 0 0 calc(100% - 20px); /* Account for margins */
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
             overflow: hidden;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            margin: 0 10px; /* Equal margins on both sides */
+            display: flex;
+            flex-direction: column;
             cursor: pointer;
-            animation: fadeInUp 0.6s ease forwards;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .service-card:nth-child(1) { animation-delay: 0.1s; }
-        .service-card:nth-child(2) { animation-delay: 0.2s; }
-        .service-card:nth-child(3) { animation-delay: 0.3s; }
-        .service-card:nth-child(4) { animation-delay: 0.4s; }
-
-        @keyframes fadeInUp {
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            transition: all 0.3s ease;
         }
 
         .service-card:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
         }
 
         .service-image {
             width: 100%;
-            height: 60px;
+            height: 150px;
             object-fit: cover;
-            transition: transform 0.3s ease;
-        }
-
-        .service-card:hover .service-image {
-            transform: scale(1.1);
+            display: block;
         }
 
         .service-name {
-            padding: 6px 4px;
+            padding: 12px 8px;
             text-align: center;
-            font-size: 11px;
+            font-size: 16px;
             font-weight: bold;
             color: #5d4037;
-            line-height: 1;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
+            background: white;
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         /* Navigation arrows */
@@ -244,18 +227,19 @@
             position: absolute;
             top: 50%;
             transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 36px;
+            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
             z-index: 10;
             transition: all 0.3s ease;
-            opacity: 0.7;
+            opacity: 0.8;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .services-nav:hover {
@@ -274,20 +258,21 @@
 
         .services-nav i {
             color: #5d4037;
-            font-size: 14px;
+            font-size: 16px;
         }
 
         /* Dots indicator */
         .services-dots {
             display: flex;
             justify-content: center;
-            gap: 8px;
-            margin-top: 10px;
+            gap: 10px;
+            margin-top: 15px;
+            padding: 0 15px;
         }
 
         .services-dot {
-            width: 8px;
-            height: 8px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
@@ -298,7 +283,6 @@
             background: white;
             transform: scale(1.2);
         }
-
 
         .search-container {
             padding: 15px;
@@ -1466,10 +1450,7 @@
             </div>
         </div>
       
-        <!-- NEW SERVICES SECTION -->
-        <!-- UPDATED SERVICES SECTION -->
-<!-- UPDATED SERVICES SECTION - SINGLE ROW -->
-<!-- UPDATED SERVICES SECTION WITH ANIMATION -->
+        <!-- UPDATED SERVICES SECTION - MOBILE OPTIMIZED WITH FIXED ALIGNMENT -->
         <div class="services-section">
             <h3 class="services-title">Our Special Services</h3>
             <p class="services-subtitle">Click any service to contact owner directly via WhatsApp</p>
@@ -2052,6 +2033,11 @@
         let homePressTimer = null;
         let reviewsScrollInterval = null;
 
+        // Services animation variables
+        let servicesCurrentSlide = 0;
+        let servicesTotalSlides = 0;
+        let servicesAutoSlideInterval;
+
         // DOM elements
         const productsContainer = document.getElementById('productsContainer');
         const cartModal = document.getElementById('cartModal');
@@ -2119,6 +2105,9 @@
             
             // Start auto-scrolling reviews
             startReviewsAutoScroll();
+            
+            // Initialize services slider
+            initServicesSlider();
         });
         
         // Set up event listeners
@@ -2190,6 +2179,95 @@
                     showNotification('Invalid credentials', 'error');
                 }
             });
+        }
+
+        // Initialize services slider
+        function initServicesSlider() {
+            const servicesContainer = document.getElementById('servicesContainer');
+            const serviceCards = servicesContainer.querySelectorAll('.service-card');
+            servicesTotalSlides = serviceCards.length - 1; // 0-based index
+            
+            // Create dots
+            createServicesDots();
+            
+            // Start auto sliding
+            startServicesAutoSlide();
+            
+            // Pause auto slide on hover
+            servicesContainer.addEventListener('mouseenter', () => {
+                clearInterval(servicesAutoSlideInterval);
+            });
+            
+            // Resume auto slide when mouse leaves
+            servicesContainer.addEventListener('mouseleave', () => {
+                startServicesAutoSlide();
+            });
+        }
+        
+        // Create dots for services slider
+        function createServicesDots() {
+            const dotsContainer = document.getElementById('servicesDots');
+            dotsContainer.innerHTML = '';
+            
+            for (let i = 0; i <= servicesTotalSlides; i++) {
+                const dot = document.createElement('div');
+                dot.className = `services-dot ${i === 0 ? 'active' : ''}`;
+                dot.addEventListener('click', () => {
+                    goToServicesSlide(i);
+                });
+                dotsContainer.appendChild(dot);
+            }
+        }
+        
+        // Slide services
+        function slideServices(direction) {
+            if (direction === 'next') {
+                servicesCurrentSlide = Math.min(servicesCurrentSlide + 1, servicesTotalSlides);
+            } else {
+                servicesCurrentSlide = Math.max(servicesCurrentSlide - 1, 0);
+            }
+            
+            updateServicesSlider();
+        }
+        
+        // Go to specific slide
+        function goToServicesSlide(slideIndex) {
+            servicesCurrentSlide = slideIndex;
+            updateServicesSlider();
+        }
+        
+        // Update services slider position
+        function updateServicesSlider() {
+            const servicesContainer = document.getElementById('servicesContainer');
+            const translateX = -servicesCurrentSlide * 100;
+            servicesContainer.style.transform = `translateX(${translateX}%)`;
+            
+            // Update active dot
+            const dots = document.querySelectorAll('.services-dot');
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === servicesCurrentSlide);
+            });
+            
+            // Reset auto slide timer
+            resetServicesAutoSlide();
+        }
+        
+        // Start auto sliding for services
+        function startServicesAutoSlide() {
+            servicesAutoSlideInterval = setInterval(() => {
+                if (servicesCurrentSlide >= servicesTotalSlides) {
+                    servicesCurrentSlide = 0;
+                } else {
+                    servicesCurrentSlide++;
+                }
+                updateServicesSlider();
+            }, 4000); // Change slide every 4 seconds
+        }
+        
+        // Reset auto slide timer
+        function resetServicesAutoSlide() {
+            clearInterval(servicesAutoSlideInterval);
+            startServicesAutoSlide();
         }
 
         // Update search icon based on input
@@ -3189,110 +3267,6 @@
                 }
             }
         }
-        // Services animation variables
-        let servicesCurrentSlide = 0;
-        let servicesTotalSlides = 0;
-        let servicesAutoSlideInterval;
-        const servicesSlideWidth = 90; // Width of each service card + gap
-        
-        // Initialize services slider
-        function initServicesSlider() {
-            const servicesContainer = document.getElementById('servicesContainer');
-            const serviceCards = servicesContainer.querySelectorAll('.service-card');
-            servicesTotalSlides = Math.max(0, serviceCards.length - 4); // 4 cards visible at a time
-            
-            // Create dots
-            createServicesDots();
-            
-            // Start auto sliding
-            startServicesAutoSlide();
-            
-            // Pause auto slide on hover
-            servicesContainer.addEventListener('mouseenter', () => {
-                clearInterval(servicesAutoSlideInterval);
-            });
-            
-            // Resume auto slide when mouse leaves
-            servicesContainer.addEventListener('mouseleave', () => {
-                startServicesAutoSlide();
-            });
-        }
-        
-        // Create dots for services slider
-        function createServicesDots() {
-            const dotsContainer = document.getElementById('servicesDots');
-            dotsContainer.innerHTML = '';
-            
-            for (let i = 0; i <= servicesTotalSlides; i++) {
-                const dot = document.createElement('div');
-                dot.className = `services-dot ${i === 0 ? 'active' : ''}`;
-                dot.addEventListener('click', () => {
-                    goToServicesSlide(i);
-                });
-                dotsContainer.appendChild(dot);
-            }
-        }
-        
-        // Slide services
-        function slideServices(direction) {
-            if (direction === 'next') {
-                servicesCurrentSlide = Math.min(servicesCurrentSlide + 1, servicesTotalSlides);
-            } else {
-                servicesCurrentSlide = Math.max(servicesCurrentSlide - 1, 0);
-            }
-            
-            updateServicesSlider();
-        }
-        
-        // Go to specific slide
-        function goToServicesSlide(slideIndex) {
-            servicesCurrentSlide = slideIndex;
-            updateServicesSlider();
-        }
-        
-        // Update services slider position
-        function updateServicesSlider() {
-            const servicesContainer = document.getElementById('servicesContainer');
-            const translateX = -servicesCurrentSlide * servicesSlideWidth;
-            servicesContainer.style.transform = `translateX(${translateX}px)`;
-            
-            // Update active dot
-            const dots = document.querySelectorAll('.services-dot');
-            dots.forEach((dot, index) => {
-                dot.classList.toggle('active', index === servicesCurrentSlide);
-            });
-            
-            // Reset auto slide timer
-            resetServicesAutoSlide();
-        }
-        
-        // Start auto sliding for services
-        function startServicesAutoSlide() {
-            servicesAutoSlideInterval = setInterval(() => {
-                if (servicesCurrentSlide >= servicesTotalSlides) {
-                    servicesCurrentSlide = 0;
-                } else {
-                    servicesCurrentSlide++;
-                }
-                updateServicesSlider();
-            }, 4000); // Change slide every 4 seconds
-        }
-        
-        // Reset auto slide timer
-        function resetServicesAutoSlide() {
-            clearInterval(servicesAutoSlideInterval);
-            startServicesAutoSlide();
-        }
-        
-        // Initialize services slider when DOM is loaded
-        document.addEventListener('DOMContentLoaded', function() {
-            // Previous initialization code...
-            
-            // Initialize services slider
-            initServicesSlider();
-        });
-        
-
     </script>
 </body>
 </html>
