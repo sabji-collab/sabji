@@ -2230,10 +2230,25 @@
                 window.scrollTo(0, 0);
             });
 
-            // Enter key support for search
+            // Enter key support for search - UPDATED FOR KEYBOARD CLOSE
             searchInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
+                    // Prevent default form submission
+                    e.preventDefault();
+                    
+                    // Perform search
                     filterProducts(this.value);
+                    
+                    // Close keyboard by blurring the input
+                    this.blur();
+                    
+                    // Optional: Scroll back to products section
+                    setTimeout(() => {
+                        const productsSection = document.querySelector('.products-container');
+                        if (productsSection) {
+                            productsSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }, 300);
                 }
             });
 
@@ -2402,6 +2417,8 @@
                     searchInput.value = '';
                     filterProducts('');
                     updateSearchIcon();
+                    // Also close keyboard when clearing search
+                    searchInput.blur();
                 };
             } else {
                 searchIcon.className = 'search-icon fas fa-search';
