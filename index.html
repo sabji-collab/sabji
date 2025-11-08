@@ -25,12 +25,11 @@
         
         header {
             background-color: white;
-            padding: 20px 15px;
+            padding: 10px 12px;
             text-align: center;
             position: sticky;
             top: 0;
             z-index: 100;
-            border-bottom: 2px solid #f0f0f0;
         }
         
         nav {
@@ -43,14 +42,16 @@
             color: black;
             text-decoration: none;
             font-weight: bold;
-            font-size: 18px;
+            font-size: 16px;
             padding: 5px 10px;
             transition: all 0.3s ease;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 4px;
+            backdrop-filter: blur(5px);
         }
         
         nav a:hover {
-            background-color: #f5f5f5;
-            border-radius: 4px;
+            background-color: rgba(245, 245, 245, 0.9);
         }
         
         .hero-section {
@@ -144,10 +145,10 @@
             transform: scale(1.1);
         }
         
-        /* UPDATED SERVICES SECTION - MOBILE OPTIMIZED WITH FIXED ALIGNMENT */
+        /* UPDATED SERVICES SECTION - SHOW 3 CARDS AT A TIME */
         .services-section {
             background: linear-gradient(135deg, #8d6e63, #5d4037);
-            padding: 15px 0;
+            padding: 10px 0;
             border-bottom: 1px solid #f0f0f0;
             position: relative;
             overflow: hidden;
@@ -156,8 +157,8 @@
         .services-title {
             text-align: center;
             color: white;
-            font-size: 18px;
-            margin-bottom: 8px;
+            font-size: 16px;
+            margin-bottom: 5px;
             font-weight: bold;
             padding: 0 15px;
         }
@@ -165,8 +166,8 @@
         .services-subtitle {
             text-align: center;
             color: rgba(255, 255, 255, 0.8);
-            font-size: 13px;
-            margin-bottom: 15px;
+            font-size: 12px;
+            margin-bottom: 10px;
             padding: 0 15px;
         }
 
@@ -174,7 +175,7 @@
             position: relative;
             overflow: hidden;
             width: 100%;
-            height: 220px; /* Fixed height for mobile */
+            height: 130px; /* Adjusted height for 3 cards */
         }
 
         .services-container {
@@ -185,16 +186,17 @@
         }
 
         .service-card {
-            flex: 0 0 calc(100% - 20px); /* Account for margins */
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
+            flex: 0 0 calc(33.33% - 10px); /* Show 3 cards at a time */
+            background: rgba(255, 255, 255, 0.85); /* More transparent background */
+            border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            margin: 0 10px; /* Equal margins on both sides */
+            margin: 0 5px; /* Reduced margins for 3 cards */
             display: flex;
             flex-direction: column;
             cursor: pointer;
             transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
 
         .service-card:hover {
@@ -204,18 +206,18 @@
 
         .service-image {
             width: 100%;
-            height: 150px;
+            height: 80px; /* Adjusted image height */
             object-fit: cover;
             display: block;
         }
 
         .service-name {
-            padding: 12px 8px;
+            padding: 5px; /* Reduced padding */
             text-align: center;
-            font-size: 16px;
+            font-size: 11px; /* Smaller font */
             font-weight: bold;
             color: #5d4037;
-            background: white;
+            background: transparent; /* Transparent background */
             flex-grow: 1;
             display: flex;
             align-items: center;
@@ -230,8 +232,8 @@
             background: rgba(255, 255, 255, 0.9);
             border: none;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
+            width: 30px;
+            height: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -258,21 +260,21 @@
 
         .services-nav i {
             color: #5d4037;
-            font-size: 16px;
+            font-size: 14px;
         }
 
         /* Dots indicator */
         .services-dots {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
+            gap: 8px;
+            margin-top: 10px;
             padding: 0 15px;
         }
 
         .services-dot {
-            width: 10px;
-            height: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: rgba(255, 255, 255, 0.5);
             cursor: pointer;
@@ -679,6 +681,13 @@
             margin-bottom: 20px;
             font-weight: 600;
             letter-spacing: 1px;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
         .review-container {
@@ -703,6 +712,19 @@
             padding: 15px;
             text-align: left;
             transition: transform 0.4s ease, box-shadow 0.4s ease;
+            animation: fadeInUp 0.8s ease-out;
+            animation-fill-mode: both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
         
         .review-card:hover {
@@ -726,6 +748,12 @@
             color: gold;
             font-size: 16px;
             margin-top: 5px;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
         }
 
         /* Counter + Review Button */
@@ -743,6 +771,12 @@
             color: #2e7d32;
             font-weight: 700;
             text-align: center;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { transform: translateY(20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         
         .counter p {
@@ -760,11 +794,19 @@
             font-size: 14px;
             cursor: pointer;
             transition: 0.3s ease;
+            animation: bounce 2s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-10px); }
+            60% { transform: translateY(-5px); }
         }
         
         .review-btn:hover {
             transform: scale(1.05);
             background: linear-gradient(135deg, #66bb6a, #2e7d32);
+            animation: none;
         }
         
         /* Modal Styles */
@@ -1316,6 +1358,31 @@
             margin-top: 10px;
         }
         
+        /* File upload styling */
+        .file-upload-container {
+            margin-bottom: 15px;
+        }
+        
+        .file-upload-label {
+            display: block;
+            background: #3498db;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-align: center;
+            margin-bottom: 10px;
+            transition: background 0.3s ease;
+        }
+        
+        .file-upload-label:hover {
+            background: #2980b9;
+        }
+        
+        .file-upload-input {
+            display: none;
+        }
+        
         /* Admin Login Modal */
         .admin-login-modal {
             display: none;
@@ -1450,7 +1517,7 @@
             </div>
         </div>
       
-        <!-- UPDATED SERVICES SECTION - MOBILE OPTIMIZED WITH FIXED ALIGNMENT -->
+        <!-- UPDATED SERVICES SECTION - SHOW 3 CARDS AT A TIME -->
         <div class="services-section">
             <h3 class="services-title">Our Special Services</h3>
             <p class="services-subtitle">Click any service to contact owner directly via WhatsApp</p>
@@ -1477,6 +1544,16 @@
                         <img src="https://plus.unsplash.com/premium_photo-1686529896385-8a8d581d0225?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTd8fGJ1bGslMjBvcmRlciUyMHZlZ3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600" alt="Bulk Orders" class="service-image">
                         <div class="service-name">Bulk Orders</div>
                     </div>
+                     
+                    <div class="service-card" onclick="openServiceWhatsApp('Restaurant Orders')">
+                        <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Restaurant Orders" class="service-image">
+                        <div class="service-name">Restaurant Orders</div>
+                    </div>
+                    <div class="service-card" onclick="openServiceWhatsApp('Catering Orders')">
+                        <img src="https://images.unsplash.com/photo-1555244162-803834f70033?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Catering Orders" class="service-image">
+                        <div class="service-name">Catering Orders</div>
+                    </div>
+                  
                 </div>
                 
                 <button class="services-nav next" onclick="slideServices('next')">
@@ -1497,16 +1574,16 @@
         
         <div class="category-section">
             <div class="category-images">
-                <div class="category-image active" data-category="indian" onclick="toggleCategory('indian')">
+                <div class="category-image active" data-category="indian" onclick="loadCategory('indian')">
                     <img src="https://www.authenticindiatours.com/app/uploads/2024/10/Indian-Vegetables-1400-collage-1400x550-c-default.jpg" alt="Indian Vegetables">
                 </div>
-                <div class="category-image" data-category="exotic" onclick="toggleCategory('exotic')">
+                <div class="category-image" data-category="exotic" onclick="loadCategory('exotic')">
                     <img src="https://www.allthatgrows.in/cdn/shop/articles/Feat_image-Exotic.png?v=1654490717" alt="Exotic Vegetables">
                 </div>
-                <div class="category-image" data-category="leafy" onclick="toggleCategory('leafy')">
+                <div class="category-image" data-category="leafy" onclick="loadCategory('leafy')">
                     <img src="https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Leafy Vegetables">
                 </div>
-                <div class="category-image" data-category="others" onclick="toggleCategory('others')">
+                <div class="category-image" data-category="others" onclick="loadCategory('others')">
                     <img src="https://www.indianhealthyrecipes.com/wp-content/uploads/2024/05/how-to-make-paneer-recipe.webp" alt="Other Products">
                 </div>
             </div>
@@ -1703,8 +1780,14 @@
                             <option value="bottle">bottle</option>
                         </select>
                     </div>
+                    <div class="file-upload-container">
+                        <label for="newProductImageUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload Product Image
+                        </label>
+                        <input type="file" id="newProductImageUpload" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'newProductImage')">
+                    </div>
                     <div class="form-row">
-                        <input type="text" id="newProductImage" placeholder="Image URL">
+                        <input type="text" id="newProductImage" placeholder="Or enter image URL">
                     </div>
                     <div class="form-row">
                         <button class="admin-btn save-btn" onclick="addNewProduct()">Save Product</button>
@@ -1735,8 +1818,14 @@
                             <option value="bottle">bottle</option>
                         </select>
                     </div>
+                    <div class="file-upload-container">
+                        <label for="editProductImageUpload" class="file-upload-label">
+                            <i class="fas fa-upload"></i> Upload New Product Image
+                        </label>
+                        <input type="file" id="editProductImageUpload" class="file-upload-input" accept="image/*" onchange="handleImageUpload(this, 'editProductImage')">
+                    </div>
                     <div class="form-row">
-                        <input type="text" id="editProductImage" placeholder="Image URL">
+                        <input type="text" id="editProductImage" placeholder="Or enter image URL">
                     </div>
                     <div class="form-row">
                         <button class="admin-btn save-btn" onclick="updateProduct()">Update Product</button>
@@ -2033,9 +2122,9 @@
         let homePressTimer = null;
         let reviewsScrollInterval = null;
 
-        // Services animation variables
+        // Services animation variables - UPDATED FOR 3 CARDS
         let servicesCurrentSlide = 0;
-        let servicesTotalSlides = 0;
+        let servicesTotalSlides = 1; // 4 cards total, showing 3 at a time = 2 slides
         let servicesAutoSlideInterval;
 
         // DOM elements
@@ -2116,7 +2205,7 @@
             categoryButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const category = this.getAttribute('data-category');
-                    toggleCategory(category);
+                    loadCategory(category);
                 });
             });
          
@@ -2126,10 +2215,23 @@
                 updateSearchIcon();
             });
 
-            // Search icon click
+            // Search icon click - focus on search input to open keyboard
             searchIcon.addEventListener('click', function() {
+                searchInput.focus();
                 if (searchInput.value.trim() !== '') {
                     filterProducts(searchInput.value);
+                }
+            });
+
+            // Search bar focus - scroll to top
+            searchInput.addEventListener('focus', function() {
+                window.scrollTo(0, 0);
+            });
+
+            // Enter key support for search
+            searchInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    filterProducts(this.value);
                 }
             });
 
@@ -2181,11 +2283,11 @@
             });
         }
 
-        // Initialize services slider
+        // Initialize services slider - UPDATED FOR 3 CARDS
         function initServicesSlider() {
             const servicesContainer = document.getElementById('servicesContainer');
             const serviceCards = servicesContainer.querySelectorAll('.service-card');
-            servicesTotalSlides = serviceCards.length - 1; // 0-based index
+            servicesTotalSlides = Math.ceil(serviceCards.length / 3) - 1; // 4 cards, 3 per slide = 2 slides (0 and 1)
             
             // Create dots
             createServicesDots();
@@ -2219,7 +2321,7 @@
             }
         }
         
-        // Slide services
+        // Slide services - UPDATED FOR 3 CARDS
         function slideServices(direction) {
             if (direction === 'next') {
                 servicesCurrentSlide = Math.min(servicesCurrentSlide + 1, servicesTotalSlides);
@@ -2236,7 +2338,7 @@
             updateServicesSlider();
         }
         
-        // Update services slider position
+        // Update services slider position - UPDATED FOR 3 CARDS
         function updateServicesSlider() {
             const servicesContainer = document.getElementById('servicesContainer');
             const translateX = -servicesCurrentSlide * 100;
@@ -2282,24 +2384,18 @@
             } else {
                 searchIcon.className = 'search-icon fas fa-search';
                 searchIcon.onclick = function() {
+                    searchInput.focus();
                     filterProducts(searchInput.value);
                 };
             }
         }
 
-        // Toggle category and product visibility
-        function toggleCategory(category) {
-            // If clicking the same category, toggle product visibility
-            if (category === currentCategory) {
-                productsVisible = !productsVisible;
-                productsContainer.style.display = productsVisible ? 'grid' : 'none';
-            } else {
-                // If clicking a different category, show products and switch category
-                productsVisible = true;
-                productsContainer.style.display = 'grid';
-                setActiveCategory(category);
-                loadProducts(category);
-            }
+        // Load category (products never disappear when clicking same category)
+        function loadCategory(category) {
+            productsVisible = true;
+            productsContainer.style.display = 'grid';
+            setActiveCategory(category);
+            loadProducts(category);
         }
 
         // Set active category
@@ -2420,14 +2516,30 @@
             }
         }
 
-        // Filter products based on search
+        // Filter products based on search - searches across all categories
         function filterProducts(searchTerm) {
-            const products = PRODUCTS[currentCategory];
-            const filteredProducts = products.filter(product => 
+            // If search term is empty, show current category products
+            if (searchTerm.trim() === '') {
+                loadProducts(currentCategory);
+                return;
+            }
+            
+            // Search across all categories
+            const allProducts = [];
+            for (const category in PRODUCTS) {
+                allProducts.push(...PRODUCTS[category]);
+            }
+            
+            const filteredProducts = allProducts.filter(product => 
                 product.name.toLowerCase().includes(searchTerm.toLowerCase())
             );
             
             productsContainer.innerHTML = '';
+            
+            if (filteredProducts.length === 0) {
+                productsContainer.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #666;">No products found matching your search</div>';
+                return;
+            }
             
             filteredProducts.forEach(product => {
                 const quantityOptions = getQuantityOptions(product.unit);
@@ -3082,6 +3194,21 @@
             document.getElementById('newProductImage').value = '';
         }
 
+        // Handle image upload
+        function handleImageUpload(input, targetInputId) {
+            const file = input.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    // For demo purposes, we'll just show the file name
+                    // In a real app, you would upload the image to a server
+                    document.getElementById(targetInputId).value = `Uploaded: ${file.name}`;
+                    showNotification('Image selected: ' + file.name);
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
         function addNewProduct() {
             const name = document.getElementById('newProductName').value;
             const price = parseInt(document.getElementById('newProductPrice').value);
@@ -3269,4 +3396,4 @@
         }
     </script>
 </body>
-</html>
+</html>       
