@@ -406,6 +406,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             border: 1px solid rgba(255,255,255,0.3);
+            position: relative;
         }
         
         .product-card:hover {
@@ -493,7 +494,7 @@
         }
         
         .add-to-cart {
-            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
             color: white;
             border: none;
             padding: 8px 12px;
@@ -505,7 +506,34 @@
         }
         
         .add-to-cart:hover {
-            background: linear-gradient(135deg, #c0392b, #a93226);
+            background: linear-gradient(135deg, #45a049, #1b5e20);
+        }
+        
+        .add-to-cart:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+        
+        .out-of-stock {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+            border-radius: 15px;
+        }
+        
+        .stock-info {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 5px;
         }
         
         .sticky-cart-btn {
@@ -650,6 +678,11 @@
         
         .checkout-btn:hover {
             background: linear-gradient(135deg, #45a049, #1b5e20);
+        }
+        
+        .checkout-btn:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
         }
         
         .empty-cart {
@@ -991,6 +1024,17 @@
             color: #2e7d32;
         }
         
+        .shop-closed-message {
+            background: #ffebee;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            margin: 10px 0;
+            font-weight: bold;
+            color: #c62828;
+            border-left: 4px solid #c62828;
+        }
+        
         .notification {
             position: fixed;
             top: 20px;
@@ -1010,6 +1054,86 @@
             font-size: 12px;
             color: #666;
             margin-left: 5px;
+        }
+        
+        /* Shop Closed Popup */
+        .shop-closed-popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 5000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .shop-closed-content {
+            background: white;
+            width: 90%;
+            max-width: 350px;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            animation: popIn 0.5s ease-out;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.8); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        
+        .shop-closed-icon {
+            font-size: 60px;
+            color: #ff5722;
+            margin-bottom: 15px;
+            animation: bounce 2s infinite;
+        }
+        
+        .shop-closed-title {
+            font-size: 24px;
+            color: #c62828;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+        
+        .shop-closed-message {
+            font-size: 16px;
+            color: #555;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+        
+        .shop-closed-timing {
+            background: #fff3e0;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-weight: bold;
+            color: #e65100;
+            border: 2px dashed #ff9800;
+        }
+        
+        .shop-closed-btn {
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+            margin-top: 10px;
+        }
+        
+        .shop-closed-btn:hover {
+            background: linear-gradient(135deg, #45a049, #1b5e20);
+            transform: translateY(-2px);
         }
         
         /* About Us Page Styles */
@@ -1485,6 +1609,18 @@
             border: 1px solid #ddd;
             border-radius: 4px;
         }
+        
+        /* Stock Management */
+        .stock-management {
+            margin-top: 15px;
+        }
+        
+        .stock-input {
+            width: 80px;
+            padding: 5px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
     </style>
 </head>
 <body>
@@ -1502,7 +1638,7 @@
                 <img src="hero.jpg" alt="Fresh Vegetables">
             </div>
             <div class="offer-banner">
-                🚚 Free Delivery on orders above ₹999 within 2km!  
+                🚚 Free Delivery on orders above ₹<span id="freeDeliveryMinDisplay">999</span> within 2km!  
               <div class="slider-item">📞 For Bulk Orders: +919051410591</div>
             </div>
             <div class="features-slider">
@@ -1782,6 +1918,9 @@
                             <option value="bottle">bottle</option>
                         </select>
                     </div>
+                    <div class="form-row">
+                        <input type="number" id="newProductStock" placeholder="Stock Quantity" min="0">
+                    </div>
                     <div class="file-upload-container">
                         <label for="newProductImageUpload" class="file-upload-label">
                             <i class="fas fa-upload"></i> Upload Product Image
@@ -1819,6 +1958,9 @@
                             <option value="tin">tin</option>
                             <option value="bottle">bottle</option>
                         </select>
+                    </div>
+                    <div class="form-row">
+                        <input type="number" id="editProductStock" placeholder="Stock Quantity" min="0">
                     </div>
                     <div class="file-upload-container">
                         <label for="editProductImageUpload" class="file-upload-label">
@@ -1936,7 +2078,11 @@
                 <div class="billing-details" id="billingSummary">
                     <!-- Billing summary will be loaded here -->
                 </div>
-                <button type="button" class="checkout-btn" onclick="validateAndCheckout()">
+                
+                <!-- Shop Timing Message -->
+                <div id="shopTimingMessage"></div>
+                
+                <button type="button" class="checkout-btn" id="confirmOrderBtn" onclick="validateAndCheckout()">
                     Confirm Order via WhatsApp
                 </button>
             </form>
@@ -1954,18 +2100,118 @@
             <div class="offer-details">
                 <div class="offer-title">Get 5% Discount!</div>
                 <div class="offer-description">
-                    Leave us a review on Google and get 5% off on your first order! 
+                    Leave us a review on Google and get 5% off on your next order! 
                     Share your experience and help others discover fresh vegetables.
                 </div>
                 <div class="offer-actions">
-                    <button class="offer-btn offer-primary" onclick="openGoogleReview()">
-                        Write Review
+                    <button class="offer-btn offer-primary" onclick="verifyReview()">
+                        Verify My Review
                     </button>
                     <button class="offer-btn offer-secondary" onclick="closeReviewOfferModal()">
                         Maybe Later
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Review Verification Modal -->
+    <div class="modal" id="reviewVerificationModal">
+        <div class="modal-content review-offer-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Review Verification</h2>
+                <button class="close-modal" onclick="closeReviewVerificationModal()">&times;</button>
+            </div>
+            <div class="offer-details">
+                <div class="offer-title">5% Discount Available!</div>
+                <div class="offer-description">
+                    To verify your review and get the 5% discount, please:
+                    <ol style="text-align: left; margin: 10px 0; padding-left: 20px;">
+                        <li>Leave a review on our Google page</li>
+                        <li>Take a screenshot of your review</li>
+                        <li>Send the screenshot to us via WhatsApp</li>
+                    </ol>
+                    Once verified, we'll apply your discount!
+                </div>
+                <div class="offer-actions">
+                    <button class="offer-btn offer-primary" onclick="openGoogleReview()">
+                        Write Review
+                    </button>
+                    <button class="offer-btn offer-secondary" onclick="closeReviewVerificationModal()">
+                        I'll Do It Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Review Success Modal -->
+    <div class="modal" id="reviewSuccessModal">
+        <div class="modal-content review-offer-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Review Verified!</h2>
+                <button class="close-modal" onclick="closeReviewSuccessModal()">&times;</button>
+            </div>
+            <div class="offer-details">
+                <div class="offer-title">Thank You for Your Review!</div>
+                <div class="offer-description">
+                    Your review has been verified successfully. You now qualify for a 5% discount on your order!
+                </div>
+                <div class="offer-actions">
+                    <button class="offer-btn offer-primary" onclick="applyReviewDiscount()">
+                        Apply 5% Discount
+                    </button>
+                    <button class="offer-btn offer-secondary" onclick="closeReviewSuccessModal()">
+                        No Thanks
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Missed Discount Modal -->
+    <div class="modal" id="missedDiscountModal">
+        <div class="modal-content review-offer-modal">
+            <div class="modal-header">
+                <h2 class="modal-title">Missed Discount</h2>
+                <button class="close-modal" onclick="closeMissedDiscountModal()">&times;</button>
+            </div>
+            <div class="offer-details">
+                <div class="offer-title">You Missed 5% Off!</div>
+                <div class="offer-description">
+                    You could have saved 5% on your order by leaving a review on Google. Next time, don't miss out on this great offer!
+                </div>
+                <div class="offer-actions">
+                    <button class="offer-btn offer-primary" onclick="openGoogleReview()">
+                        Write Review Now
+                    </button>
+                    <button class="offer-btn offer-secondary" onclick="closeMissedDiscountModal()">
+                        Maybe Later
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Shop Closed Popup -->
+    <div class="shop-closed-popup" id="shopClosedPopup">
+        <div class="shop-closed-content">
+            <div class="shop-closed-icon">
+                <i class="fas fa-store-slash"></i>
+            </div>
+            <h2 class="shop-closed-title">Sorry Guys!</h2>
+            <p class="shop-closed-message">
+                Our shop is currently closed. We're taking a break to ensure we provide you with the freshest vegetables tomorrow morning.
+            </p>
+            <div class="shop-closed-timing">
+                <i class="fas fa-clock"></i> Shop Timings: 9 AM to 11 PM
+            </div>
+            <p class="shop-closed-message">
+                Kindly order between 9 AM to 11 PM to get products next morning.
+            </p>
+            <button class="shop-closed-btn" onclick="closeShopClosedPopup()">
+                Got It!
+            </button>
         </div>
     </div>
     
@@ -1982,6 +2228,7 @@
             facebook: "https://www.facebook.com/sobjihaat?mibextid=ZbWKwL",
             googleReview: "https://www.google.com/maps/place/Maa+Bipodtarini+Vegetables+Store+(+Mbvs)/@22.494756,88.3756357,17z/data=!4m8!3m7!1s0x3a0271d310a0d625:0x10158e4517c36650!8m2!3d22.494756!4d88.3756357!9m1!1b1!16s%2Fg%2F11pd1hljby?entry=ttu&g_ep=EgoyMDI1MTEwMi4wIKXMDSoASAFQAw%3D%3D",
             deliveryFee: 20,
+            freeDeliveryMin: 999, // Minimum order value for free delivery
             servicePincodes: ["700047", "700045", "700075", "700094", "700084", "700092", "700040", "700040", "700068","700095","700032" ,"700031"],
             pincodeCharges: {
                 "700047": 20,
@@ -1996,90 +2243,96 @@
                 "700095": 30, 
                 
                 "700032": 20
+            },
+            // Shop timing settings
+            shopTiming: {
+                openHour: 9, // 9 AM
+                closeHour: 23, // 11 PM
+                closeReminderMinutes: 10 // Show reminder 10 minutes before closing
             }
         };
 
-        // Product data with categories and images
+        // Product data with categories and images - UPDATED WITH STOCK INFO
         const PRODUCTS = {
             indian: [
-                { id: 1, name: "Lemon", price: 5, image: "https://images.unsplash.com/photo-1642372849451-18113b4c5cd2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdyZWVuJTIwbGVtb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600", unit: "piece" },
-                { id: 2, name: "Gondhoraj Lemon", price: 10, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiQoIPXSEcCvBDZjvxt4_x_uoW077Hqp9NIA&s", unit: "piece" },
-                { id: 3, name: "Coconut", price: 30, image: "https://images.pexels.com/photos/7676718/pexels-photo-7676718.jpeg?auto=compress&cs=tinysrgb&w=500", unit: "piece" },
-                { id: 4, name: "Banana Leaf", price: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYhlhz7ZAOS7D_KJKGoKgi3L4a4bud02dNOk4Ss6VW-Kd2th9BFkOF9iKI2D6PozDxvjs&usqp=CAU", unit: "piece" },
-                { id: 5, name: "Green Chilli", price: 30, image: "https://images.unsplash.com/photo-1524593410820-38510f580a77?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Z3JlZW4lMjBjaGlsbGl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500", unit: "kg" },
-                { id: 6, name: "Capsicum", price: 60, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGevOiu5UtbsM-3_FUvQqCHxHeba90AQrh5ur4RO9_78qB3TiJrUGySBFA_a7YRdAaV6QG&s", unit: "kg" },
-                { id: 7, name: "Coriander Leaf", price: 15, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1COIRSeNGaQbFIWJVPEweb3YBZHv1egKzGDNCL23U0rtIVRiOCD-uhw&s", unit: "bunch" },
-                { id: 8, name: "Cabbage", price: 25, image: "https://cdn.pixabay.com/photo/2018/10/03/22/08/kohl-3722517_1280.jpg", unit: "kg" },
-                { id: 9, name: "Beans", price: 40, image: "https://cdn.pixabay.com/photo/2015/05/11/03/58/green-beans-761940_1280.jpg", unit: "kg" },
-                { id: 10, name: "Carrot", price: 35, image: "https://cdn.pixabay.com/photo/2016/07/11/00/18/carrots-1508847_1280.jpg", unit: "kg" },
-                { id: 11, name: "Tamarind", price: 80, image: "https://cdn.pixabay.com/photo/2023/11/08/05/16/tamarind-8373925_1280.jpg", unit: "kg" },
-                { id: 12, name: "Ginger", price: 120, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQImHPZdvqeFGi1WBTN0zSZLWKhyzj1VpgObruNXbCtI1F3KrcEVZLnJs7GqU7KY0fvcYeQ&s", unit: "kg" },
-                { id: 13, name: "Garlic Whole", price: 150, image: "https://cdn.pixabay.com/photo/2016/03/05/19/14/garlic-1238337_1280.jpg", unit: "kg" },
-                { id: 14, name: "Cucumber", price: 20, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuS3B37HDFWyYVflnzf25xrHpoahLScsaFEeAGXvvG2XNO1UCiaWxqky3Xrx7c1sjpHkukjvlxHDy7OWBGGdFmqVQ5JEoT9vb4H-DwQA&s=10", unit: "kg" },
-                { id: 15, name: "Tomato", price: 30, image: "https://cdn.pixabay.com/photo/2019/07/11/10/14/cherry-tomato-4330441_1280.jpg", unit: "kg" },
-                { id: 16, name: "Onion", price: 40, image: "https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg" },
-                { id: 17, name: "Chandramukhi Potato", price: 25, image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg" },
-                { id: 18, name: "Jyoti Potato", price: 30, image: "https://cdn.pixabay.com/photo/2017/02/19/02/40/potatoes-2078775_1280.jpg", unit: "kg" },
-                { id: 19, name: "Beet Root", price: 35, image: "https://cdn.pixabay.com/photo/2018/06/22/13/52/beetroot-3490809_1280.jpg", unit: "kg" },
-                { id: 20, name: "Spinach", price: 20, image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg" },
-                { id: 21, name: "Papaya", price: 50, image: "https://cdn.pixabay.com/photo/2014/04/24/11/37/papaya-331273_1280.jpg", unit: "kg" },
-                { id: 22, name: "Mustard Leaf", price: 25, image: "https://cdn.pixabay.com/photo/2015/10/05/09/48/blossom-972369_1280.jpg", unit: "bunch" }
+                { id: 1, name: "Lemon", price: 5, image: "https://images.unsplash.com/photo-1642372849451-18113b4c5cd2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdyZWVuJTIwbGVtb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600", unit: "piece", stock: 50 },
+                { id: 2, name: "Gondhoraj Lemon", price: 10, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiQoIPXSEcCvBDZjvxt4_x_uoW077Hqp9NIA&s", unit: "piece", stock: 30 },
+                { id: 3, name: "Coconut", price: 30, image: "https://images.pexels.com/photos/7676718/pexels-photo-7676718.jpeg?auto=compress&cs=tinysrgb&w=500", unit: "piece", stock: 20 },
+                { id: 4, name: "Banana Leaf", price: 5, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTYhlhz7ZAOS7D_KJKGoKgi3L4a4bud02dNOk4Ss6VW-Kd2th9BFkOF9iKI2D6PozDxvjs&usqp=CAU", unit: "piece", stock: 15 },
+                { id: 5, name: "Green Chilli", price: 30, image: "https://images.unsplash.com/photo-1524593410820-38510f580a77?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Z3JlZW4lMjBjaGlsbGl8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=500", unit: "kg", stock: 25 },
+                { id: 6, name: "Capsicum", price: 60, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSGevOiu5UtbsM-3_FUvQqCHxHeba90AQrh5ur4RO9_78qB3TiJrUGySBFA_a7YRdAaV6QG&s", unit: "kg", stock: 18 },
+                { id: 7, name: "Coriander Leaf", price: 15, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS1COIRSeNGaQbFIWJVPEweb3YBZHv1egKzGDNCL23U0rtIVRiOCD-uhw&s", unit: "bunch", stock: 40 },
+                { id: 8, name: "Cabbage", price: 25, image: "https://cdn.pixabay.com/photo/2018/10/03/22/08/kohl-3722517_1280.jpg", unit: "kg", stock: 12 },
+                { id: 9, name: "Beans", price: 40, image: "https://cdn.pixabay.com/photo/2015/05/11/03/58/green-beans-761940_1280.jpg", unit: "kg", stock: 22 },
+                { id: 10, name: "Carrot", price: 35, image: "https://cdn.pixabay.com/photo/2016/07/11/00/18/carrots-1508847_1280.jpg", unit: "kg", stock: 30 },
+                { id: 11, name: "Tamarind", price: 80, image: "https://cdn.pixabay.com/photo/2023/11/08/05/16/tamarind-8373925_1280.jpg", unit: "kg", stock: 8 },
+                { id: 12, name: "Ginger", price: 120, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQImHPZdvqeFGi1WBTN0zSZLWKhyzj1VpgObruNXbCtI1F3KrcEVZLnJs7GqU7KY0fvcYeQ&s", unit: "kg", stock: 15 },
+                { id: 13, name: "Garlic Whole", price: 150, image: "https://cdn.pixabay.com/photo/2016/03/05/19/14/garlic-1238337_1280.jpg", unit: "kg", stock: 20 },
+                { id: 14, name: "Cucumber", price: 20, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRuS3B37HDFWyYVflnzf25xrHpoahLScsaFEeAGXvvG2XNO1UCiaWxqky3Xrx7c1sjpHkukjvlxHDy7OWBGGdFmqVQ5JEoT9vb4H-DwQA&s=10", unit: "kg", stock: 25 },
+                { id: 15, name: "Tomato", price: 30, image: "https://cdn.pixabay.com/photo/2019/07/11/10/14/cherry-tomato-4330441_1280.jpg", unit: "kg", stock: 35 },
+                { id: 16, name: "Onion", price: 40, image: "https://images.unsplash.com/photo-1580201092675-a0a6a6cafbb1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg", stock: 40 },
+                { id: 17, name: "Chandramukhi Potato", price: 25, image: "https://images.unsplash.com/photo-1518977676601-b53f82aba655?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg", stock: 50 },
+                { id: 18, name: "Jyoti Potato", price: 30, image: "https://cdn.pixabay.com/photo/2017/02/19/02/40/potatoes-2078775_1280.jpg", unit: "kg", stock: 45 },
+                { id: 19, name: "Beet Root", price: 35, image: "https://cdn.pixabay.com/photo/2018/06/22/13/52/beetroot-3490809_1280.jpg", unit: "kg", stock: 15 },
+                { id: 20, name: "Spinach", price: 20, image: "https://images.unsplash.com/photo-1576045057995-568f588f82fb?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60", unit: "kg", stock: 30 },
+                { id: 21, name: "Papaya", price: 50, image: "https://cdn.pixabay.com/photo/2014/04/24/11/37/papaya-331273_1280.jpg", unit: "kg", stock: 10 },
+                { id: 22, name: "Mustard Leaf", price: 25, image: "https://cdn.pixabay.com/photo/2015/10/05/09/48/blossom-972369_1280.jpg", unit: "bunch", stock: 25 }
             ],
             exotic: [
-                { id: 23, name: "Red Cabbage", price: 50, image: "https://cdn.pixabay.com/photo/2019/10/18/15/47/red-cabbage-4559494_1280.jpg", unit: "piece" },
-                { id: 24, name: "Broccoli", price: 80, image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/broccoli-1238250_1280.jpg", unit: "piece" },
-                { id: 25, name: "Bell Pepper", price: 120, image: "https://cdn.pixabay.com/photo/2014/10/22/21/54/bell-peppers-499068_1280.jpg", unit: "kg" },
-                { id: 26, name: "Cherry Tomato", price: 100, image: "https://cdn.pixabay.com/photo/2018/08/21/19/48/tomatoes-3622009_1280.jpg", unit: "kg" },
-                { id: 27, name: "Pakchoi", price: 60, image: "https://cdn.pixabay.com/photo/2020/03/21/12/26/vegetables-4953713_1280.jpg", unit: "kg" },
-                { id: 28, name: "Button Mushroom", price: 150, image: "https://cdn.pixabay.com/photo/2016/04/25/01/57/mushrooms-1351060_1280.jpg", unit: "kg" },
-                { id: 29, name: "Bean Sprouts", price: 60, image: "https://cdn.pixabay.com/photo/2013/07/18/15/08/green-bean-bud-164652_1280.jpg", unit: "kg" },
-                { id: 30, name: "Peeled Garlic", price: 200, image: "https://cdn.pixabay.com/photo/2020/06/21/01/28/garlic-5322921_1280.jpg", unit: "kg" },
-                { id: 31, name: "Sweet Corn", price: 40, image: "https://cdn.pixabay.com/photo/2020/08/23/12/20/corn-5510709_1280.jpg", unit: "kg" },
-                { id: 32, name: "English Cucumber", price: 50, image: "https://images.unsplash.com/photo-1602343244137-a142ba5c7b22?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGN1Y3VtYmVyfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600", unit: "piece" },
-                { id: 33, name: "Iceberg Lettuce", price: 40, image: "https://cdn.pixabay.com/photo/2018/06/29/07/26/salad-3505392_1280.jpg", unit: "piece" },
-                { id: 34, name: "Chinese Cabbage", price: 45, image: "https://cdn.pixabay.com/photo/2019/05/14/08/02/beijing-cabbage-4201754_1280.jpg", unit: "kg" },
-                { id: 35, name: "Thai Ginger", price: 180, image: "https://cdn.pixabay.com/photo/2018/05/21/12/03/ginger-3418066_1280.jpg", unit: "kg" },
-                { id: 36, name: "Lemon Grass", price: 60, image: "https://cdn.pixabay.com/photo/2015/01/27/23/16/lemon-614349_1280.jpg", unit: "bunch" },
-                { id: 37, name: "Mango Ginger", price: 200, image: "https://cdn.pixabay.com/photo/2019/01/31/10/59/ginger-3966502_1280.jpg", unit: "kg" },
-                { id: 38, name: "Asparagus", price: 250, image: "https://cdn.pixabay.com/photo/2019/12/08/18/28/asparagus-4681835_1280.jpg", unit: "kg" },
-                { id: 39, name: "Thyme", price: 100, image: "https://cdn.pixabay.com/photo/2013/06/01/03/07/thyme-115349_1280.jpg", unit: "bunch" },
-                { id: 40, name: "Rosemary", price: 120, image: "https://cdn.pixabay.com/photo/2017/08/15/15/45/rosemary-2644421_1280.jpg", unit: "bunch" },
-                { id: 41, name: "Zucchini", price: 70, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrp6WoTf1KV0DtT4JPA_BGMQhs7BsfETX_GsCoNECe8DnUogsZ3BDGGueO-bI7RryhHHc&usqp=CAU", unit: "kg" },
-               { id: 69, name: "Baby Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpznDYQajTnFiIGB6AgZrKxSHRJ9KyrVOWWMYyfhFb7pTRcvvpAS0bL6jNUq8qeCgy2aCx&s", unit: "packet" },
-               { id: 70, name: "Kaffir Lime ", price: 25, image: "https://cdn.pixabay.com/photo/2016/07/29/15/46/bergamot-1554227_1280.jpg", unit: "packet" },
+                { id: 23, name: "Red Cabbage", price: 50, image: "https://cdn.pixabay.com/photo/2019/10/18/15/47/red-cabbage-4559494_1280.jpg", unit: "piece", stock: 8 },
+                { id: 24, name: "Broccoli", price: 80, image: "https://cdn.pixabay.com/photo/2016/03/05/19/02/broccoli-1238250_1280.jpg", unit: "piece", stock: 12 },
+                { id: 25, name: "Bell Pepper", price: 120, image: "https://cdn.pixabay.com/photo/2014/10/22/21/54/bell-pepper-499068_1280.jpg", unit: "kg", stock: 15 },
+                { id: 26, name: "Cherry Tomato", price: 100, image: "https://cdn.pixabay.com/photo/2018/08/21/19/48/tomatoes-3622009_1280.jpg", unit: "kg", stock: 10 },
+                { id: 27, name: "Pakchoi", price: 60, image: "https://cdn.pixabay.com/photo/2020/03/21/12/26/vegetables-4953713_1280.jpg", unit: "kg", stock: 8 },
+                { id: 28, name: "Button Mushroom", price: 150, image: "https://cdn.pixabay.com/photo/2016/04/25/01/57/mushrooms-1351060_1280.jpg", unit: "kg", stock: 5 },
+                { id: 29, name: "Bean Sprouts", price: 60, image: "https://cdn.pixabay.com/photo/2013/07/18/15/08/green-bean-bud-164652_1280.jpg", unit: "kg", stock: 12 },
+                { id: 30, name: "Peeled Garlic", price: 200, image: "https://cdn.pixabay.com/photo/2020/06/21/01/28/garlic-5322921_1280.jpg", unit: "kg", stock: 10 },
+                { id: 31, name: "Sweet Corn", price: 40, image: "https://cdn.pixabay.com/photo/2020/08/23/12/20/corn-5510709_1280.jpg", unit: "kg", stock: 20 },
+                { id: 32, name: "English Cucumber", price: 50, image: "https://images.unsplash.com/photo-1602343244137-a142ba5c7b22?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTl8fGN1Y3VtYmVyfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600", unit: "piece", stock: 15 },
+                { id: 33, name: "Iceberg Lettuce", price: 40, image: "https://cdn.pixabay.com/photo/2018/06/29/07/26/salad-3505392_1280.jpg", unit: "piece", stock: 10 },
+                { id: 34, name: "Chinese Cabbage", price: 45, image: "https://cdn.pixabay.com/photo/2019/05/14/08/02/beijing-cabbage-4201754_1280.jpg", unit: "kg", stock: 8 },
+                { id: 35, name: "Thai Ginger", price: 180, image: "https://cdn.pixabay.com/photo/2018/05/21/12/03/ginger-3418066_1280.jpg", unit: "kg", stock: 6 },
+                { id: 36, name: "Lemon Grass", price: 60, image: "https://cdn.pixabay.com/photo/2015/01/27/23/16/lemon-614349_1280.jpg", unit: "bunch", stock: 12 },
+                { id: 37, name: "Mango Ginger", price: 200, image: "https://cdn.pixabay.com/photo/2019/01/31/10/59/ginger-3966502_1280.jpg", unit: "kg", stock: 5 },
+                { id: 38, name: "Asparagus", price: 250, image: "https://cdn.pixabay.com/photo/2019/12/08/18/28/asparagus-4681835_1280.jpg", unit: "kg", stock: 3 },
+                { id: 39, name: "Thyme", price: 100, image: "https://cdn.pixabay.com/photo/2013/06/01/03/07/thyme-115349_1280.jpg", unit: "bunch", stock: 8 },
+                { id: 40, name: "Rosemary", price: 120, image: "https://cdn.pixabay.com/photo/2017/08/15/15/45/rosemary-2644421_1280.jpg", unit: "bunch", stock: 7 },
+                { id: 41, name: "Zucchini", price: 70, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTrp6WoTf1KV0DtT4JPA_BGMQhs7BsfETX_GsCoNECe8DnUogsZ3BDGGueO-bI7RryhHHc&usqp=CAU", unit: "kg", stock: 10 },
+               { id: 69, name: "Baby Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpznDYQajTnFiIGB6AgZrKxSHRJ9KyrVOWWMYyfhFb7pTRcvvpAS0bL6jNUq8qeCgy2aCx&s", unit: "packet", stock: 15 },
+               { id: 70, name: "Kaffir Lime ", price: 25, image: "https://cdn.pixabay.com/photo/2016/07/29/15/46/bergamot-1554227_1280.jpg", unit: "packet", stock: 10 },
                
-                { id: 42, name: "Lotus Stem", price: 150, image: "https://cdn.pixabay.com/photo/2016/07/29/07/36/lotus-1550951_1280.jpg", unit: "kg" }
+                { id: 42, name: "Lotus Stem", price: 150, image: "https://cdn.pixabay.com/photo/2016/07/29/07/36/lotus-1550951_1280.jpg", unit: "kg", stock: 5 }
             ],
             leafy: [
-                { id: 43, name: "Spring Onion", price: 30, image: "https://cdn.pixabay.com/photo/2017/04/04/17/59/vegetables-2202500_1280.jpg", unit: "bunch" },
-                { id: 44, name: "Garlic Leaf", price: 40, image: "https://cdn.pixabay.com/photo/2019/03/03/10/11/vegetables-4031508_1280.jpg", unit: "bunch" },
-                { id: 45, name: "Basil Leaf", price: 50, image: "https://plus.unsplash.com/premium_photo-1725899523683-838307ab1552?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFzaWwlMjBsZWFmfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600", unit: "bunch" },
-                { id: 46, name: "Parsley", price: 60, image: "https://images.unsplash.com/photo-1721117090894-029c81cf0758?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGFyc2xleXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600", unit: "bunch" },
-                { id: 47, name: "Leek", price: 70, image: "https://plus.unsplash.com/premium_photo-1723651321795-c659bf9f2f96?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bGVla3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600", unit: "bunch" },
-                { id: 48, name: "Dill Leaf", price: 55, image: "https://images.unsplash.com/photo-1694916202336-e49dc321954d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlsbCUyMGxlYWZ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600​", unit: "bunch" },
-                { id: 49, name: "Rocket Lettuce", price: 80, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBdUpRAOg0PFaLqCdLx0pgp1GXsEaxf3MSACnlcd8hPFF3F2v6bQscYo8&s", unit: "bunch" },
-                { id: 50, name: "Mint", price: 25, image: "https://cdn.pixabay.com/photo/2020/03/05/16/43/mint-4904876_1280.jpg", unit: "bunch" },
-                { id: 51, name: "Kale", price: 90, image: "https://media.gettyimages.com/id/1202296635/photo/top-view-of-bowl-of-kale-cutting-board-with-knife-and-chopped-kale.jpg?s=612x612&w=0&k=20&c=q1YQwyoZR18mD1lsS3VFs-v90rACdk5eTuH3eZ10URU=", unit: "bunch" },
-                { id: 52, name: "Celery Leaf", price: 45, image: "https://cdn.pixabay.com/photo/2017/02/21/08/08/vegetables-2085017_1280.jpg" },
-                { id: 53, name: "Lemon Leaf", price: 20, image: "https://images.pexels.com/photos/10223092/pexels-photo-10223092.jpeg", unit: "bunch" },
-                { id: 54, name: "English Parsley", price: 65, image: "https://cdn.pixabay.com/photo/2021/07/07/18/34/parsley-6395051_1280.jpg", unit: "bunch" },
-                { id: 55, name: "Lettuce", price: 35, image: "https://cdn.pixabay.com/photo/2018/06/17/14/45/salad-3480649_1280.jpg", unit: "bunch" },
-                { id: 56, name: "Curry Leaf", price: 15, image: "https://cdn.pixabay.com/photo/2017/08/31/16/57/kadipatta-2701445_1280.jpg", unit: "bunch" },
-               { id: 68, name: "Red Lettuce", price: 70, image: "https://cdn.pixabay.com/photo/2019/12/01/15/51/salad-4665745_1280.jpg", unit: "bunch" }
+                { id: 43, name: "Spring Onion", price: 30, image: "https://cdn.pixabay.com/photo/2017/04/04/17/59/vegetables-2202500_1280.jpg", unit: "bunch", stock: 20 },
+                { id: 44, name: "Garlic Leaf", price: 40, image: "https://cdn.pixabay.com/photo/2019/03/03/10/11/vegetables-4031508_1280.jpg", unit: "bunch", stock: 15 },
+                { id: 45, name: "Basil Leaf", price: 50, image: "https://plus.unsplash.com/premium_photo-1725899523683-838307ab1552?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFzaWwlMjBsZWFmfGVufDB8fDB8fHww&auto=format&fit=crop&q=60&w=600", unit: "bunch", stock: 12 },
+                { id: 46, name: "Parsley", price: 60, image: "https://images.unsplash.com/photo-1721117090894-029c81cf0758?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8cGFyc2xleXxlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600", unit: "bunch", stock: 10 },
+                { id: 47, name: "Leek", price: 70, image: "https://plus.unsplash.com/premium_photo-1723651321795-c659bf9f2f96?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8bGVla3xlbnwwfHwwfHx8MA%3D%3D&auto=format&fit=crop&q=60&w=600", unit: "bunch", stock: 8 },
+                { id: 48, name: "Dill Leaf", price: 55, image: "https://images.unsplash.com/photo-1694916202336-e49dc321954d?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZGlsbCUyMGxlYWZ8ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600​", unit: "bunch", stock: 10 },
+                { id: 49, name: "Rocket Lettuce", price: 80, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTBdUpRAOg0PFaLqCdLx0pgp1GXsEaxf3MSACnlcd8hPFF3F2v6bQscYo8&s", unit: "bunch", stock: 6 },
+                { id: 50, name: "Mint", price: 25, image: "https://cdn.pixabay.com/photo/2020/03/05/16/43/mint-4904876_1280.jpg", unit: "bunch", stock: 25 },
+                { id: 51, name: "Kale", price: 90, image: "https://media.gettyimages.com/id/1202296635/photo/top-view-of-bowl-of-kale-cutting-board-with-knife-and-chopped-kale.jpg?s=612x612&w=0&k=20&c=q1YQwyoZR18mD1lsS3VFs-v90rACdk5eTuH3eZ10URU=", unit: "bunch", stock: 5 },
+                { id: 52, name: "Celery Leaf", price: 45, image: "https://cdn.pixabay.com/photo/2017/02/21/08/08/vegetables-2085017_1280.jpg", unit: "bunch", stock: 10 },
+                { id: 53, name: "Lemon Leaf", price: 20, image: "https://images.pexels.com/photos/10223092/pexels-photo-10223092.jpeg", unit: "bunch", stock: 15 },
+                { id: 54, name: "English Parsley", price: 65, image: "https://cdn.pixabay.com/photo/2021/07/07/18/34/parsley-6395051_1280.jpg", unit: "bunch", stock: 8 },
+                { id: 55, name: "Lettuce", price: 35, image: "https://cdn.pixabay.com/photo/2018/06/17/14/45/salad-3480649_1280.jpg", unit: "bunch", stock: 12 },
+                { id: 56, name: "Curry Leaf", price: 15, image: "https://cdn.pixabay.com/photo/2017/08/31/16/57/kadipatta-2701445_1280.jpg", unit: "bunch", stock: 20 },
+               { id: 68, name: "Red Lettuce", price: 70, image: "https://cdn.pixabay.com/photo/2019/12/01/15/51/salad-4665745_1280.jpg", unit: "bunch", stock: 7 }
            
             ],
             others: [
-               { id: 66, name: "Paneer(200gm)", price: 110, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaWxrnLvlyxIAsS1W9Z6LwgWJw48c-wyCR6lKul-H-zPiA9cyNZNFOaHRdLv_tlw1G7Z4arA&s", unit: "packet" },
-               { id: 67, name: "Baby Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpznDYQajTnFiIGB6AgZrKxSHRJ9KyrVOWWMYyfhFb7pTRcvvpAS0bL6jNUq8qeCgy2aCx&s", unit: "packet" },
-               { id: 65, name: "Sweet Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnAvi8QlDdKGxEq9RDT9HI-L58A-3XJd48UlGi566E6ZxSj8ege4ToIqnSSwtp_ZqYfend&s", unit: "packet" },
-                { id: 57, name: "Green Peas", price: 50, image: "https://cdn.pixabay.com/photo/2020/04/04/09/40/peas-5001525_1280.jpg", unit: "packet" },
-                { id: 58, name: "French Fries", price: 80, image: "https://cdn.pixabay.com/photo/2022/09/29/11/45/food-7487178_1280.jpg", unit: "packet" },
-                { id: 59, name: "Panko Bread Crumb", price: 100, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlRPtSfqM213b1BgbFzx2tZJx4eaMNu2zTXvqd_6KM6Ka5XfxvpBYcWvgozyRXI2-9B6aM7w&s", unit: "packet" },
-                { id: 60, name: "Tomato Puree", price: 70, image: "https://images.pexels.com/photos/3832360/pexels-photo-3832360.jpeg", unit: "tin" },
-                { id: 61, name: "Mushroom", price: 150, image: "https://cdn.pixabay.com/photo/2017/08/28/17/35/mushrooms-2690529_1280.jpg", unit: "tin" },
-                { id: 62, name: "Pineapple Slice", price: 60, image: "https://cdn.pixabay.com/photo/2020/05/08/12/45/pineapple-5145473_1280.jpg", unit: "tin" },
-                { id: 63, name: "Fruit Cocktail", price: 120, image: "https://cdn.pixabay.com/photo/2015/04/16/13/25/cocktail-725578_1280.jpg", unit: "tin" },
-                { id: 64, name: "Rice Wine", price: 200, image: "https://cdn.pixabay.com/photo/2016/04/18/05/20/alcohol-1335965_1280.jpg", unit: "bottle" }
+               { id: 66, name: "Paneer(200gm)", price: 110, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTaWxrnLvlyxIAsS1W9Z6LwgWJw48c-wyCR6lKul-H-zPiA9cyNZNFOaHRdLv_tlw1G7Z4arA&s", unit: "packet", stock: 25 },
+               { id: 67, name: "Baby Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpznDYQajTnFiIGB6AgZrKxSHRJ9KyrVOWWMYyfhFb7pTRcvvpAS0bL6jNUq8qeCgy2aCx&s", unit: "packet", stock: 18 },
+               { id: 65, name: "Sweet Corn", price: 50, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSnAvi8QlDdKGxEq9RDT9HI-L58A-3XJd48UlGi566E6ZxSj8ege4ToIqnSSwtp_ZqYfend&s", unit: "packet", stock: 20 },
+                { id: 57, name: "Green Peas", price: 50, image: "https://cdn.pixabay.com/photo/2020/04/04/09/40/peas-5001525_1280.jpg", unit: "packet", stock: 30 },
+                { id: 58, name: "French Fries", price: 80, image: "https://cdn.pixabay.com/photo/2022/09/29/11/45/food-7487178_1280.jpg", unit: "packet", stock: 15 },
+                { id: 59, name: "Panko Bread Crumb", price: 100, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlRPtSfqM213b1BgbFzx2tZJx4eaMNu2zTXvqd_6KM6Ka5XfxvpBYcWvgozyRXI2-9B6aM7w&s", unit: "packet", stock: 10 },
+                { id: 60, name: "Tomato Puree", price: 70, image: "https://images.pexels.com/photos/3832360/pexels-photo-3832360.jpeg", unit: "tin", stock: 20 },
+                { id: 61, name: "Mushroom", price: 150, image: "https://cdn.pixabay.com/photo/2017/08/28/17/35/mushrooms-2690529_1280.jpg", unit: "tin", stock: 12 },
+                { id: 62, name: "Pineapple Slice", price: 60, image: "https://cdn.pixabay.com/photo/2020/05/08/12/45/pineapple-5145473_1280.jpg", unit: "tin", stock: 15 },
+                { id: 63, name: "Fruit Cocktail", price: 120, image: "https://cdn.pixabay.com/photo/2015/04/16/13/25/cocktail-725578_1280.jpg", unit: "tin", stock: 8 },
+                { id: 64, name: "Rice Wine", price: 200, image: "https://cdn.pixabay.com/photo/2016/04/18/05/20/alcohol-1335965_1280.jpg", unit: "bottle", stock: 10 }
             ]
         };
 
@@ -2123,6 +2376,9 @@
         let homeClickCount = 0;
         let homePressTimer = null;
         let reviewsScrollInterval = null;
+        let reviewDiscountApplied = false;
+        let reviewVerified = false;
+        let shopClosedPopupShown = false;
 
         // Services animation variables - UPDATED FOR 3 CARDS
         let servicesCurrentSlide = 0;
@@ -2143,11 +2399,18 @@
         const checkoutForm = document.getElementById('checkoutForm');
         const billingSummary = document.getElementById('billingSummary');
         const reviewOfferModal = document.getElementById('reviewOfferModal');
+        const reviewVerificationModal = document.getElementById('reviewVerificationModal');
+        const reviewSuccessModal = document.getElementById('reviewSuccessModal');
+        const missedDiscountModal = document.getElementById('missedDiscountModal');
+        const shopClosedPopup = document.getElementById('shopClosedPopup');
         const notification = document.getElementById('notification');
         const adminLoginModal = document.getElementById('adminLoginModal');
         const adminPanel = document.getElementById('adminPanel');
         const adminDashboard = document.getElementById('adminDashboard');
         const adminLoginForm = document.getElementById('adminLoginForm');
+        const shopTimingMessage = document.getElementById('shopTimingMessage');
+        const confirmOrderBtn = document.getElementById('confirmOrderBtn');
+        const freeDeliveryMinDisplay = document.getElementById('freeDeliveryMinDisplay');
 
         // Admin credentials
         const ADMIN_CREDENTIALS = {
@@ -2185,6 +2448,12 @@
             loadProducts(currentCategory);
             setupEventListeners();
             updateCartCount();
+            
+            // Update free delivery minimum display
+            updateFreeDeliveryMinDisplay();
+            
+            // Check shop timing and show popup if closed
+            checkShopTimingAndShowPopup();
             
             // Show review offer modal after a short delay
             setTimeout(() => {
@@ -2290,6 +2559,34 @@
             reviewOfferModal.addEventListener('click', function(e) {
                 if (e.target === reviewOfferModal) {
                     closeReviewOfferModal();
+                }
+            });
+
+            // Close review verification modal when clicking outside
+            reviewVerificationModal.addEventListener('click', function(e) {
+                if (e.target === reviewVerificationModal) {
+                    closeReviewVerificationModal();
+                }
+            });
+
+            // Close review success modal when clicking outside
+            reviewSuccessModal.addEventListener('click', function(e) {
+                if (e.target === reviewSuccessModal) {
+                    closeReviewSuccessModal();
+                }
+            });
+
+            // Close missed discount modal when clicking outside
+            missedDiscountModal.addEventListener('click', function(e) {
+                if (e.target === missedDiscountModal) {
+                    closeMissedDiscountModal();
+                }
+            });
+
+            // Close shop closed popup when clicking outside
+            shopClosedPopup.addEventListener('click', function(e) {
+                if (e.target === shopClosedPopup) {
+                    closeShopClosedPopup();
                 }
             });
 
@@ -2409,6 +2706,11 @@
             startServicesAutoSlide();
         }
 
+        // Update free delivery minimum display
+        function updateFreeDeliveryMinDisplay() {
+            freeDeliveryMinDisplay.textContent = BUSINESS_INFO.freeDeliveryMin;
+        }
+
         // Update search icon based on input
         function updateSearchIcon() {
             if (searchInput.value.trim() !== '') {
@@ -2465,12 +2767,15 @@
             
             products.forEach(product => {
                 const quantityOptions = getQuantityOptions(product.unit);
+                const isOutOfStock = product.stock <= 0;
+                
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
+                        <div class="stock-info">${isOutOfStock ? 'Out of Stock' : `Stock: ${product.stock} ${product.unit}`}</div>
                         <div class="product-price">₹${product.price}<span class="unit-display">/${product.unit}</span></div>
                         <div class="quantity-selector">
                             <div class="quantity-options" id="quantity-options-${product.id}">
@@ -2479,12 +2784,15 @@
                                 `).join('')}
                             </div>
                             <div class="custom-quantity">
-                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.1" step="0.1" oninput="validateNumberInput(this)">
+                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.1" step="0.1" oninput="validateNumberInput(this)" ${isOutOfStock ? 'disabled' : ''}>
                                 <span class="custom-quantity-unit">${product.unit}</span>
                             </div>
                         </div>
-                        <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled' : ''}>
+                            ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
                     </div>
+                    ${isOutOfStock ? '<div class="out-of-stock">Out of Stock</div>' : ''}
                 `;
                 productsContainer.appendChild(productCard);
             });
@@ -2582,12 +2890,15 @@
             
             filteredProducts.forEach(product => {
                 const quantityOptions = getQuantityOptions(product.unit);
+                const isOutOfStock = product.stock <= 0;
+                
                 const productCard = document.createElement('div');
                 productCard.className = 'product-card';
                 productCard.innerHTML = `
                     <img src="${product.image}" alt="${product.name}" class="product-image">
                     <div class="product-info">
                         <div class="product-name">${product.name}</div>
+                        <div class="stock-info">${isOutOfStock ? 'Out of Stock' : `Stock: ${product.stock} ${product.unit}`}</div>
                         <div class="product-price">₹${product.price}<span class="unit-display">/${product.unit}</span></div>
                         <div class="quantity-selector">
                             <div class="quantity-options" id="quantity-options-${product.id}">
@@ -2596,12 +2907,15 @@
                                 `).join('')}
                             </div>
                             <div class="custom-quantity">
-                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.1" step="0.1" oninput="validateNumberInput(this)">
+                                <input type="number" class="custom-quantity-input" id="custom-quantity-${product.id}" placeholder="Custom" min="0.1" step="0.1" oninput="validateNumberInput(this)" ${isOutOfStock ? 'disabled' : ''}>
                                 <span class="custom-quantity-unit">${product.unit}</span>
                             </div>
                         </div>
-                        <button class="add-to-cart" onclick="addToCart(${product.id})">Add to Cart</button>
+                        <button class="add-to-cart" onclick="addToCart(${product.id})" ${isOutOfStock ? 'disabled' : ''}>
+                            ${isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+                        </button>
                     </div>
+                    ${isOutOfStock ? '<div class="out-of-stock">Out of Stock</div>' : ''}
                 `;
                 productsContainer.appendChild(productCard);
             });
@@ -2653,6 +2967,12 @@
 
         // Add product to cart
         function addToCart(productId) {
+            // Check if shop is open
+            if (!checkShopTiming()) {
+                showShopClosedPopup();
+                return;
+            }
+            
             // Check if quantity is selected
             if (!selectedQuantities[productId] || selectedQuantities[productId] === 0) {
                 showNotification('Please select quantity first');
@@ -2670,10 +2990,28 @@
             
             if (!product) return;
             
+            // Check if product is in stock
+            if (product.stock <= 0) {
+                showNotification('Sorry, this product is out of stock', 'error');
+                return;
+            }
+            
+            // Check if requested quantity exceeds available stock
+            if (quantity > product.stock) {
+                showNotification(`Only ${product.stock} ${product.unit} available`, 'error');
+                return;
+            }
+            
             // Check if product already in cart
             const existingItemIndex = cart.findIndex(item => item.id === productId);
             
             if (existingItemIndex !== -1) {
+                // Check if total quantity exceeds stock
+                if (cart[existingItemIndex].quantity + quantity > product.stock) {
+                    showNotification(`Only ${product.stock} ${product.unit} available in total`, 'error');
+                    return;
+                }
+                
                 // Update quantity
                 cart[existingItemIndex].quantity += quantity;
             } else {
@@ -2760,22 +3098,44 @@
                 cartItems.appendChild(cartItem);
             });
             
-            // Add delivery fee
-            const total = subtotal + BUSINESS_INFO.deliveryFee;
+            // Apply discount if review discount is applied
+            let discountAmount = 0;
+            if (reviewDiscountApplied) {
+                discountAmount = subtotal * 0.05; // 5% discount
+            }
+            
+            // Calculate delivery fee
+            let deliveryFee = BUSINESS_INFO.deliveryFee;
+            if (subtotal >= BUSINESS_INFO.freeDeliveryMin) {
+                deliveryFee = 0;
+            }
+            
+            const total = subtotal - discountAmount + deliveryFee;
             
             cartTotal.innerHTML = `
                 <div class="billing-row">
                     <span>Subtotal:</span>
                     <span>₹${subtotal.toFixed(2)}</span>
                 </div>
+                ${reviewDiscountApplied ? `
+                <div class="billing-row">
+                    <span>Review Discount (5%):</span>
+                    <span>-₹${discountAmount.toFixed(2)}</span>
+                </div>
+                ` : ''}
                 <div class="billing-row">
                     <span>Delivery Fee:</span>
-                    <span>₹${BUSINESS_INFO.deliveryFee}</span>
+                    <span>${deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee}</span>
                 </div>
                 <div class="billing-row billing-total">
                     <span>Total:</span>
                     <span>₹${total.toFixed(2)}</span>
                 </div>
+                ${deliveryFee === 0 ? `
+                <div class="billing-row" style="color: #2e7d32; font-weight: bold;">
+                    <span>🎉 You've qualified for FREE delivery!</span>
+                </div>
+                ` : ''}
             `;
         }
 
@@ -2816,6 +3176,21 @@
             const itemIndex = cart.findIndex(item => item.id === productId);
             
             if (itemIndex !== -1) {
+                // Find product to check stock
+                let product = null;
+                for (const category in PRODUCTS) {
+                    product = PRODUCTS[category].find(p => p.id === productId);
+                    if (product) break;
+                }
+                
+                if (product) {
+                    // Check if new quantity exceeds stock
+                    if (cart[itemIndex].quantity + change > product.stock) {
+                        showNotification(`Only ${product.stock} ${product.unit} available`, 'error');
+                        return;
+                    }
+                }
+                
                 cart[itemIndex].quantity += change;
                 
                 if (cart[itemIndex].quantity <= 0) {
@@ -2842,6 +3217,7 @@
             }
             
             renderBillingSummary();
+            updateShopTimingMessage();
             checkoutModal.style.display = 'flex';
         }
 
@@ -2859,7 +3235,19 @@
                 subtotal += itemTotal;
             });
             
-            const total = subtotal + BUSINESS_INFO.deliveryFee;
+            // Apply discount if review discount is applied
+            let discountAmount = 0;
+            if (reviewDiscountApplied) {
+                discountAmount = subtotal * 0.05; // 5% discount
+            }
+            
+            // Calculate delivery fee
+            let deliveryFee = BUSINESS_INFO.deliveryFee;
+            if (subtotal >= BUSINESS_INFO.freeDeliveryMin) {
+                deliveryFee = 0;
+            }
+            
+            const total = subtotal - discountAmount + deliveryFee;
             
             billingSummary.innerHTML = `
                 <h3>Order Summary</h3>
@@ -2873,15 +3261,114 @@
                     <span>Subtotal:</span>
                     <span>₹${subtotal.toFixed(2)}</span>
                 </div>
+                ${reviewDiscountApplied ? `
+                <div class="billing-row">
+                    <span>Review Discount (5%):</span>
+                    <span>-₹${discountAmount.toFixed(2)}</span>
+                </div>
+                ` : ''}
                 <div class="billing-row">
                     <span>Delivery Fee:</span>
-                    <span>₹${BUSINESS_INFO.deliveryFee}</span>
+                    <span>${deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee}</span>
                 </div>
                 <div class="billing-row billing-total">
                     <span>Total:</span>
                     <span>₹${total.toFixed(2)}</span>
                 </div>
+                ${deliveryFee === 0 ? `
+                <div class="billing-row" style="color: #2e7d32; font-weight: bold;">
+                    <span>🎉 You've qualified for FREE delivery!</span>
+                </div>
+                ` : ''}
             `;
+        }
+
+        // Check shop timing and show popup if closed
+        function checkShopTimingAndShowPopup() {
+            const isShopOpen = checkShopTiming();
+            
+            if (!isShopOpen && !shopClosedPopupShown) {
+                // Show popup after a short delay
+                setTimeout(() => {
+                    showShopClosedPopup();
+                }, 1500);
+            }
+            
+            return isShopOpen;
+        }
+
+        // Check shop timing and update UI accordingly
+        function checkShopTiming() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const currentMinute = now.getMinutes();
+            
+            const isShopOpen = currentHour >= BUSINESS_INFO.shopTiming.openHour && currentHour < BUSINESS_INFO.shopTiming.closeHour;
+            
+            // Update checkout button if cart is open
+            if (cartModal.style.display === 'flex') {
+                updateShopTimingMessage();
+            }
+            
+            // Show reminder if shop is closing soon
+            if (isShopOpen && currentHour === BUSINESS_INFO.shopTiming.closeHour - 1 && 
+                currentMinute >= 60 - BUSINESS_INFO.shopTiming.closeReminderMinutes) {
+                const minutesLeft = 60 - currentMinute;
+                showNotification(`Shop closing in ${minutesLeft} minutes! Place your order soon.`, 'warning');
+            }
+            
+            return isShopOpen;
+        }
+        
+        // Update shop timing message in checkout modal
+        function updateShopTimingMessage() {
+            const isShopOpen = checkShopTiming();
+            
+            if (!isShopOpen) {
+                shopTimingMessage.innerHTML = `
+                    <div class="shop-closed-message">
+                        <i class="fas fa-store-slash"></i> Shop is currently closed.<br>
+                        We accept orders from 9 AM to 11 PM only.
+                    </div>
+                `;
+                confirmOrderBtn.disabled = true;
+                confirmOrderBtn.textContent = 'Shop Closed - Orders from 9 AM to 11 PM';
+            } else {
+                const now = new Date();
+                const currentHour = now.getHours();
+                const currentMinute = now.getMinutes();
+                
+                // Check if shop is closing soon
+                if (currentHour === BUSINESS_INFO.shopTiming.closeHour - 1 && 
+                    currentMinute >= 60 - BUSINESS_INFO.shopTiming.closeReminderMinutes) {
+                    const minutesLeft = 60 - currentMinute;
+                    shopTimingMessage.innerHTML = `
+                        <div class="delivery-time">
+                            <i class="fas fa-clock"></i> Shop closing in ${minutesLeft} minutes!<br>
+                            Place your order soon.
+                        </div>
+                    `;
+                } else {
+                    shopTimingMessage.innerHTML = `
+                        <div class="delivery-time">
+                            <i class="fas fa-clock"></i> Next day morning delivery available
+                        </div>
+                    `;
+                }
+                confirmOrderBtn.disabled = false;
+                confirmOrderBtn.textContent = 'Confirm Order via WhatsApp';
+            }
+        }
+
+        // Show shop closed popup
+        function showShopClosedPopup() {
+            shopClosedPopup.style.display = 'flex';
+            shopClosedPopupShown = true;
+        }
+
+        // Close shop closed popup
+        function closeShopClosedPopup() {
+            shopClosedPopup.style.display = 'none';
         }
 
         // Validate pincode
@@ -2929,6 +3416,12 @@
 
         // Validate and process checkout
         function validateAndCheckout() {
+            // Check if shop is open
+            if (!checkShopTiming()) {
+                showNotification('Shop is closed. We accept orders from 9 AM to 11 PM only.', 'error');
+                return;
+            }
+            
             const name = document.getElementById('customerName').value;
             const phone = document.getElementById('customerPhone').value;
             const address = document.getElementById('customerAddress').value;
@@ -2974,11 +3467,28 @@
                 message += `• ${item.name} - ${item.quantity}${getUnitDisplay(item.unit)} × ₹${item.price} = ₹${itemTotal.toFixed(2)}\n`;
             });
             
+            // Apply discount if review discount is applied
+            let discountAmount = 0;
+            if (reviewDiscountApplied) {
+                discountAmount = subtotal * 0.05; // 5% discount
+            }
+            
+            // Calculate delivery fee
+            let deliveryFee = BUSINESS_INFO.deliveryFee;
+            if (subtotal >= BUSINESS_INFO.freeDeliveryMin) {
+                deliveryFee = 0;
+            }
+            
+            const total = subtotal - discountAmount + deliveryFee;
+            
             message += `\n*Order Summary:*\n`;
             message += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
-            message += `Delivery Fee: ₹${BUSINESS_INFO.deliveryFee}\n`;
-            message += `*Total: ₹${(subtotal + BUSINESS_INFO.deliveryFee).toFixed(2)}*\n\n`;
-            message += `Please confirm order . Thank you!`;
+            if (reviewDiscountApplied) {
+                message += `Review Discount: -₹${discountAmount.toFixed(2)}\n`;
+            }
+            message += `Delivery Fee: ${deliveryFee === 0 ? 'FREE' : '₹' + deliveryFee}\n`;
+            message += `*Total: ₹${total.toFixed(2)}*\n\n`;
+            message += `Please confirm order. Thank you!`;
             
             // Encode message for URL
             const encodedMessage = encodeURIComponent(message);
@@ -2988,6 +3498,13 @@
             
             // Open WhatsApp
             window.open(whatsappUrl, '_blank');
+            
+            // Show missed discount modal if review was not verified
+            if (!reviewVerified && !reviewDiscountApplied) {
+                setTimeout(() => {
+                    showMissedDiscountModal();
+                }, 1000);
+            }
             
             // Clear cart after successful order
             cart = [];
@@ -3014,10 +3531,63 @@
             reviewOfferModal.style.display = 'none';
         }
 
+        // Show review verification modal
+        function showReviewVerificationModal() {
+            reviewVerificationModal.style.display = 'flex';
+        }
+
+        // Close review verification modal
+        function closeReviewVerificationModal() {
+            reviewVerificationModal.style.display = 'none';
+        }
+
+        // Show review success modal
+        function showReviewSuccessModal() {
+            reviewSuccessModal.style.display = 'flex';
+        }
+
+        // Close review success modal
+        function closeReviewSuccessModal() {
+            reviewSuccessModal.style.display = 'none';
+        }
+
+        // Show missed discount modal
+        function showMissedDiscountModal() {
+            missedDiscountModal.style.display = 'flex';
+        }
+
+        // Close missed discount modal
+        function closeMissedDiscountModal() {
+            missedDiscountModal.style.display = 'none';
+        }
+
+        // Verify review process
+        function verifyReview() {
+            closeReviewOfferModal();
+            showReviewVerificationModal();
+        }
+
+        // Apply review discount
+        function applyReviewDiscount() {
+            reviewDiscountApplied = true;
+            reviewVerified = true;
+            closeReviewSuccessModal();
+            renderCartItems();
+            showNotification('5% discount applied to your order!');
+        }
+
         // Show notification
         function showNotification(message, type = 'success') {
             notification.textContent = message;
-            notification.style.background = type === 'success' ? '#2ecc71' : '#e74c3c';
+            
+            if (type === 'success') {
+                notification.style.background = '#2ecc71';
+            } else if (type === 'error') {
+                notification.style.background = '#e74c3c';
+            } else if (type === 'warning') {
+                notification.style.background = '#f39c12';
+            }
+            
             notification.style.display = 'block';
             
             setTimeout(() => {
@@ -3091,6 +3661,13 @@
         function openGoogleReview() {
             window.open("https://maps.app.goo.gl/1DNV5UUPp2MXR81fA", '_blank');
             closeReviewOfferModal();
+            closeMissedDiscountModal();
+            closeReviewVerificationModal();
+            
+            // Simulate review verification after some time
+            setTimeout(() => {
+                showReviewSuccessModal();
+            }, 2000);
         }
 
         // Services section functions
@@ -3157,7 +3734,7 @@
                     productItem.innerHTML = `
                         <div class="admin-product-info">
                             <div class="admin-product-name">${product.name}</div>
-                            <div class="admin-product-details">₹${product.price}/${product.unit} | ${category}</div>
+                            <div class="admin-product-details">₹${product.price}/${product.unit} | ${category} | Stock: ${product.stock}</div>
                         </div>
                         <div class="admin-product-actions">
                             <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
@@ -3191,7 +3768,7 @@
                         productItem.innerHTML = `
                             <div class="admin-product-info">
                                 <div class="admin-product-name">${product.name}</div>
-                                <div class="admin-product-details">₹${product.price}/${product.unit} | ${category}</div>
+                                <div class="admin-product-details">₹${product.price}/${product.unit} | ${category} | Stock: ${product.stock}</div>
                             </div>
                             <div class="admin-product-actions">
                                 <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
@@ -3208,7 +3785,7 @@
 
         function loadAdminSettings() {
             document.getElementById('deliveryCharge').value = BUSINESS_INFO.deliveryFee;
-            document.getElementById('freeDeliveryMin').value = 999; // Default value
+            document.getElementById('freeDeliveryMin').value = BUSINESS_INFO.freeDeliveryMin;
         }
 
         function saveSettings() {
@@ -3216,6 +3793,10 @@
             const freeDeliveryMin = parseInt(document.getElementById('freeDeliveryMin').value);
             
             BUSINESS_INFO.deliveryFee = deliveryCharge;
+            BUSINESS_INFO.freeDeliveryMin = freeDeliveryMin;
+            
+            // Update the display
+            updateFreeDeliveryMinDisplay();
             
             // In a real app, you would save these to a database
             showNotification('Settings saved successfully');
@@ -3230,6 +3811,7 @@
             // Clear form
             document.getElementById('newProductName').value = '';
             document.getElementById('newProductPrice').value = '';
+            document.getElementById('newProductStock').value = '';
             document.getElementById('newProductImage').value = '';
         }
 
@@ -3253,6 +3835,7 @@
             const price = parseInt(document.getElementById('newProductPrice').value);
             const category = document.getElementById('newProductCategory').value;
             const unit = document.getElementById('newProductUnit').value;
+            const stock = parseInt(document.getElementById('newProductStock').value) || 0;
             const image = document.getElementById('newProductImage').value;
             
             if (!name || !price || !image) {
@@ -3269,7 +3852,8 @@
                 name: name,
                 price: price,
                 image: image,
-                unit: unit
+                unit: unit,
+                stock: stock
             });
             
             // Reload products
@@ -3298,6 +3882,7 @@
             document.getElementById('editProductPrice').value = product.price;
             document.getElementById('editProductCategory').value = productCategory;
             document.getElementById('editProductUnit').value = product.unit;
+            document.getElementById('editProductStock').value = product.stock;
             document.getElementById('editProductImage').value = product.image;
             
             // Store editing product ID
@@ -3319,6 +3904,7 @@
             const price = parseInt(document.getElementById('editProductPrice').value);
             const category = document.getElementById('editProductCategory').value;
             const unit = document.getElementById('editProductUnit').value;
+            const stock = parseInt(document.getElementById('editProductStock').value) || 0;
             const image = document.getElementById('editProductImage').value;
             
             if (!name || !price || !image) {
@@ -3342,7 +3928,8 @@
                 name: name,
                 price: price,
                 image: image,
-                unit: unit
+                unit: unit,
+                stock: stock
             });
             
             // Reload products
