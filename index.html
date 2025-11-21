@@ -2161,8 +2161,8 @@
     <div class="notification" id="notification"></div>
 
     <script>
-        // Business information
-        const BUSINESS_INFO = {
+        // Business information - loaded from API
+        let BUSINESS_INFO = {
             name: "Sobji Haat",
             phone: "+919051410591",
             address: "Jadavpur Sandhya Bazar Rd,West Bengal  kolkata-700075",
@@ -2187,8 +2187,8 @@
             }
         };
 
-        // Product data with categories and images
-        const PRODUCTS = {
+        // Product data - loaded from API, organized by category
+        let PRODUCTS = {
             indian: [
                 { id: 1, name: "Lemon", price: 5, image: "https://images.unsplash.com/photo-1642372849451-18113b4c5cd2?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTJ8fGdyZWVuJTIwbGVtb258ZW58MHx8MHx8fDA%3D&auto=format&fit=crop&q=60&w=600", unit: "piece", stock: 50 },
                 { id: 2, name: "Gondhoraj Lemon", price: 10, image: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTiQoIPXSEcCvBDZjvxt4_x_uoW077Hqp9NIA&s", unit: "piece", stock: 30 },
@@ -2337,11 +2337,12 @@
         const adminDashboard = document.getElementById('adminDashboard');
         const adminLoginForm = document.getElementById('adminLoginForm');
 
-        // Admin credentials
+        // Admin credentials and token
         const ADMIN_CREDENTIALS = {
             username: "admin",
             password: "sobjihaat2025"
         };
+        let adminToken = null;
 
         // Page navigation functions
         function showHomePage() {
@@ -2370,8 +2371,21 @@
         }
         
         // Initialize the app
-        document.addEventListener('DOMContentLoaded', function() {
-            loadProducts(currentCategory);
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Load business info from API
+                await loadBusinessInfo();
+                
+                // Load products from API
+                await loadAllProducts();
+                
+                // Load initial category products
+                loadProducts(currentCategory);
+            } catch (error) {
+                console.error('Error initializing app:', error);
+                showNotification('Error loading data. Please refresh the page.', 'error');
+            }
+            
             setupEventListeners();
             updateCartCount();
             
@@ -2384,6 +2398,44 @@
             // Initialize services slider
             initServicesSlider();
         });
+
+        // Load business info from API
+        async function loadBusinessInfo() {
+            try {
+                BUSINESS_INFO = await businessInfoAPI.get();
+            } catch (error) {
+                console.error('Error loading business info:', error);
+                // Keep default values if API fails
+            }
+        }
+
+        // Load all products from API and organize by category
+        async function loadAllProducts() {
+            try {
+                const allProducts = await productsAPI.getAll();
+                
+                // Reset products by category
+                productsByCategory = {
+                    indian: [],
+                    exotic: [],
+                    leafy: [],
+                    others: []
+                };
+                
+                // Organize products by category
+                allProducts.forEach(product => {
+                    if (productsByCategory[product.category]) {
+                        productsByCategory[product.category].push(product);
+                    }
+                });
+                
+                // Update PRODUCTS object for backward compatibility
+                PRODUCTS = productsByCategory;
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showNotification('Error loading products. Please refresh the page.', 'error');
+            }
+        }
         
         // Set up event listeners
         function setupEventListeners() {
@@ -2490,15 +2542,17 @@
             });
 
             // Admin login form
-            adminLoginForm.addEventListener('submit', function(e) {
+            adminLoginForm.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const username = document.getElementById('adminUsername').value;
                 const password = document.getElementById('adminPassword').value;
                 
-                if (username === ADMIN_CREDENTIALS.username && password === ADMIN_CREDENTIALS.password) {
+                try {
+                    const response = await adminAPI.login(username, password);
+                    adminToken = response.token;
                     showAdminPanel();
                     showNotification('Admin login successful');
-                } else {
+                } catch (error) {
                     showNotification('Invalid credentials', 'error');
                 }
             });
@@ -2643,8 +2697,13 @@
         }
 
         // Load products for a category
-        function loadProducts(category) {
-            const products = PRODUCTS[category];
+        async function loadProducts(category) {
+            // Reload products if needed
+            if (!PRODUCTS[category] || PRODUCTS[category].length === 0) {
+                await loadAllProducts();
+            }
+            
+            const products = PRODUCTS[category] || [];
             productsContainer.innerHTML = '';
             
             products.forEach(product => {
@@ -3238,47 +3297,84 @@
         }
 
         // Process checkout and send to WhatsApp
-        function processCheckout(name, phone, address, pincode) {
-            // Prepare order message
-            let message = `*${BUSINESS_INFO.name} - New Order*\n\n`;
-            message += `*Customer Details:*\n`;
-            message += `Name: ${name}\n`;
-            message += `Phone: ${phone}\n`;
-            message += `Address: ${address}\n`;
-            message += `Pincode: ${pincode}\n`;
-            message += `Payment: Cash on Delivery\n\n`;
-            message += `*Order Items:*\n`;
-            
-            let subtotal = 0;
-            cart.forEach(item => {
-                const itemTotal = item.price * item.quantity;
-                subtotal += itemTotal;
-                message += `• ${item.name} - ${item.quantity}${getUnitDisplay(item.unit)} × ₹${item.price} = ₹${itemTotal.toFixed(2)}\n`;
-            });
-            
-            message += `\n*Order Summary:*\n`;
-            message += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
-            message += `Delivery Fee: ₹${BUSINESS_INFO.deliveryFee}\n`;
-            message += `*Total: ₹${(subtotal + BUSINESS_INFO.deliveryFee).toFixed(2)}*\n\n`;
-            message += `*SPECIAL OFFER:* Show us your Google Maps review when receiving order to get 5% CASHBACK (Pay only ₹${((subtotal + BUSINESS_INFO.deliveryFee) * 0.95).toFixed(2)})!\n\n`;
-            message += `Please confirm order. Thank you!`;
-            
-            // Encode message for URL
-            const encodedMessage = encodeURIComponent(message);
-            
-            // Create WhatsApp URL
-            const whatsappUrl = `https://wa.me/${BUSINESS_INFO.phone.replace('+', '')}?text=${encodedMessage}`;
-            
-            // Open WhatsApp
-            window.open(whatsappUrl, '_blank');
-            
-            // Clear cart after successful order
-            cart = [];
-            updateCartCount();
-            closeCheckoutModal();
-            closeCart();
-            
-            showNotification('Order sent to WhatsApp successfully!', 'success');
+        async function processCheckout(name, phone, address, pincode) {
+            try {
+                // Calculate order totals
+                let subtotal = 0;
+                const orderItems = cart.map(item => {
+                    const itemTotal = item.price * item.quantity;
+                    subtotal += itemTotal;
+                    return {
+                        productId: item.id,
+                        name: item.name,
+                        price: item.price,
+                        quantity: item.quantity,
+                        unit: item.unit
+                    };
+                });
+                
+                const deliveryFee = BUSINESS_INFO.deliveryFee || 20;
+                const total = subtotal + deliveryFee;
+                
+                // Save order to backend
+                try {
+                    await ordersAPI.create({
+                        customerName: name,
+                        customerPhone: phone,
+                        address: address,
+                        pincode: pincode,
+                        items: orderItems,
+                        subtotal: subtotal,
+                        deliveryFee: deliveryFee,
+                        total: total
+                    });
+                } catch (error) {
+                    console.error('Error saving order:', error);
+                    // Continue with WhatsApp even if API fails
+                }
+                
+                // Prepare order message for WhatsApp
+                let message = `*${BUSINESS_INFO.name} - New Order*\n\n`;
+                message += `*Customer Details:*\n`;
+                message += `Name: ${name}\n`;
+                message += `Phone: ${phone}\n`;
+                message += `Address: ${address}\n`;
+                message += `Pincode: ${pincode}\n`;
+                message += `Payment: Cash on Delivery\n\n`;
+                message += `*Order Items:*\n`;
+                
+                cart.forEach(item => {
+                    const itemTotal = item.price * item.quantity;
+                    message += `• ${item.name} - ${item.quantity}${getUnitDisplay(item.unit)} × ₹${item.price} = ₹${itemTotal.toFixed(2)}\n`;
+                });
+                
+                message += `\n*Order Summary:*\n`;
+                message += `Subtotal: ₹${subtotal.toFixed(2)}\n`;
+                message += `Delivery Fee: ₹${deliveryFee}\n`;
+                message += `*Total: ₹${total.toFixed(2)}*\n\n`;
+                message += `*SPECIAL OFFER:* Show us your Google Maps review when receiving order to get 5% CASHBACK (Pay only ₹${(total * 0.95).toFixed(2)})!\n\n`;
+                message += `Please confirm order. Thank you!`;
+                
+                // Encode message for URL
+                const encodedMessage = encodeURIComponent(message);
+                
+                // Create WhatsApp URL
+                const whatsappUrl = `https://wa.me/${BUSINESS_INFO.phone.replace('+', '')}?text=${encodedMessage}`;
+                
+                // Open WhatsApp
+                window.open(whatsappUrl, '_blank');
+                
+                // Clear cart after successful order
+                cart = [];
+                updateCartCount();
+                closeCheckoutModal();
+                closeCart();
+                
+                showNotification('Order sent to WhatsApp successfully!', 'success');
+            } catch (error) {
+                console.error('Error processing checkout:', error);
+                showNotification('Error processing order. Please try again.', 'error');
+            }
         }
 
         // Show notification
@@ -3409,32 +3505,40 @@
             event.target.classList.add('active');
         }
 
-        function loadAdminProducts() {
+        async function loadAdminProducts() {
             const productList = document.getElementById('adminProductList');
-            productList.innerHTML = '';
+            productList.innerHTML = '<div class="loading">Loading products...</div>';
             
-            let totalProducts = 0;
-            
-            for (const category in PRODUCTS) {
-                PRODUCTS[category].forEach(product => {
-                    totalProducts++;
-                    const productItem = document.createElement('div');
-                    productItem.className = 'admin-product-item';
-                    productItem.innerHTML = `
-                        <div class="admin-product-info">
-                            <div class="admin-product-name">${product.name}</div>
-                            <div class="admin-product-details">₹${product.price}/${product.unit} | ${category} | Stock: ${product.stock}</div>
-                        </div>
-                        <div class="admin-product-actions">
-                            <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
-                            <button class="admin-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
-                        </div>
-                    `;
-                    productList.appendChild(productItem);
-                });
+            try {
+                await loadAllProducts();
+                
+                productList.innerHTML = '';
+                let totalProducts = 0;
+                
+                for (const category in PRODUCTS) {
+                    PRODUCTS[category].forEach(product => {
+                        totalProducts++;
+                        const productItem = document.createElement('div');
+                        productItem.className = 'admin-product-item';
+                        productItem.innerHTML = `
+                            <div class="admin-product-info">
+                                <div class="admin-product-name">${product.name}</div>
+                                <div class="admin-product-details">₹${product.price}/${product.unit} | ${category} | Stock: ${product.stock}</div>
+                            </div>
+                            <div class="admin-product-actions">
+                                <button class="admin-btn edit-btn" onclick="editProduct(${product.id})">Edit</button>
+                                <button class="admin-btn delete-btn" onclick="deleteProduct(${product.id})">Delete</button>
+                            </div>
+                        `;
+                        productList.appendChild(productItem);
+                    });
+                }
+                
+                document.getElementById('totalProducts').textContent = totalProducts;
+            } catch (error) {
+                productList.innerHTML = '<div class="error">Error loading products</div>';
+                showNotification('Error loading products', 'error');
             }
-            
-            document.getElementById('totalProducts').textContent = totalProducts;
         }
 
         function filterAdminProducts() {
@@ -3472,19 +3576,36 @@
             document.getElementById('totalProducts').textContent = totalProducts;
         }
 
-        function loadAdminSettings() {
-            document.getElementById('deliveryCharge').value = BUSINESS_INFO.deliveryFee;
-            document.getElementById('freeDeliveryMin').value = 999; // Default value
+        async function loadAdminSettings() {
+            try {
+                await loadBusinessInfo();
+                document.getElementById('deliveryCharge').value = BUSINESS_INFO.deliveryFee;
+                document.getElementById('freeDeliveryMin').value = 999; // Default value
+            } catch (error) {
+                console.error('Error loading settings:', error);
+            }
         }
 
-        function saveSettings() {
-            const deliveryCharge = parseInt(document.getElementById('deliveryCharge').value);
-            const freeDeliveryMin = parseInt(document.getElementById('freeDeliveryMin').value);
+        async function saveSettings() {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
             
-            BUSINESS_INFO.deliveryFee = deliveryCharge;
-            
-            // In a real app, you would save these to a database
-            showNotification('Settings saved successfully');
+            try {
+                const deliveryCharge = parseInt(document.getElementById('deliveryCharge').value);
+                const freeDeliveryMin = parseInt(document.getElementById('freeDeliveryMin').value);
+                
+                await businessInfoAPI.update({
+                    ...BUSINESS_INFO,
+                    deliveryFee: deliveryCharge
+                }, adminToken);
+                
+                BUSINESS_INFO.deliveryFee = deliveryCharge;
+                showNotification('Settings saved successfully');
+            } catch (error) {
+                showNotification('Error saving settings', 'error');
+            }
         }
 
         function showAddProductForm() {
@@ -3515,7 +3636,12 @@
             }
         }
 
-        function addNewProduct() {
+        async function addNewProduct() {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
             const name = document.getElementById('newProductName').value;
             const price = parseInt(document.getElementById('newProductPrice').value);
             const category = document.getElementById('newProductCategory').value;
@@ -3528,23 +3654,28 @@
                 return;
             }
             
-            // Generate a new ID
-            const newId = Math.max(...Object.values(PRODUCTS).flat().map(p => p.id)) + 1;
-            
-            // Add product to the appropriate category
-            PRODUCTS[category].push({
-                id: newId,
-                name: name,
-                price: price,
-                image: image,
-                unit: unit,
-                stock: stock
-            });
-            
-            // Reload products
-            loadAdminProducts();
-            hideAddProductForm();
-            showNotification('Product added successfully');
+            try {
+                // Generate a new ID
+                const allProducts = Object.values(PRODUCTS).flat();
+                const newId = allProducts.length > 0 ? Math.max(...allProducts.map(p => p.id)) + 1 : 1;
+                
+                await productsAPI.create({
+                    id: newId,
+                    name: name,
+                    price: price,
+                    image: image,
+                    unit: unit,
+                    stock: stock,
+                    category: category
+                }, adminToken);
+                
+                // Reload products
+                await loadAdminProducts();
+                hideAddProductForm();
+                showNotification('Product added successfully');
+            } catch (error) {
+                showNotification('Error adding product', 'error');
+            }
         }
 
         function editProduct(productId) {
@@ -3582,8 +3713,11 @@
             editingProductId = null;
         }
 
-        function updateProduct() {
-            if (!editingProductId) return;
+        async function updateProduct() {
+            if (!editingProductId || !adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
             
             const name = document.getElementById('editProductName').value;
             const price = parseInt(document.getElementById('editProductPrice').value);
@@ -3597,46 +3731,39 @@
                 return;
             }
             
-            // Find and update product
-            for (const cat in PRODUCTS) {
-                const index = PRODUCTS[cat].findIndex(p => p.id === editingProductId);
-                if (index !== -1) {
-                    // Remove from old category
-                    PRODUCTS[cat].splice(index, 1);
-                    break;
-                }
-            }
-            
-            // Add to new category
-            PRODUCTS[category].push({
-                id: editingProductId,
-                name: name,
-                price: price,
-                image: image,
-                unit: unit,
-                stock: stock
-            });
-            
-            // Reload products
-            loadAdminProducts();
-            hideEditProductForm();
-            showNotification('Product updated successfully');
-        }
-
-        function deleteProduct(productId) {
-            if (confirm('Are you sure you want to delete this product?')) {
-                // Find and remove product
-                for (const category in PRODUCTS) {
-                    const index = PRODUCTS[category].findIndex(p => p.id === productId);
-                    if (index !== -1) {
-                        PRODUCTS[category].splice(index, 1);
-                        break;
-                    }
-                }
+            try {
+                await productsAPI.update(editingProductId, {
+                    name: name,
+                    price: price,
+                    image: image,
+                    unit: unit,
+                    stock: stock,
+                    category: category
+                }, adminToken);
                 
                 // Reload products
-                loadAdminProducts();
-                showNotification('Product deleted successfully');
+                await loadAdminProducts();
+                hideEditProductForm();
+                showNotification('Product updated successfully');
+            } catch (error) {
+                showNotification('Error updating product', 'error');
+            }
+        }
+
+        async function deleteProduct(productId) {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to delete this product?')) {
+                try {
+                    await productsAPI.delete(productId, adminToken);
+                    await loadAdminProducts();
+                    showNotification('Product deleted successfully');
+                } catch (error) {
+                    showNotification('Error deleting product', 'error');
+                }
             }
         }
 
@@ -3663,7 +3790,12 @@
             });
         }
 
-        function addPincode() {
+        async function addPincode() {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
             const newPincode = document.getElementById('newPincode').value;
             const newCharge = parseInt(document.getElementById('newPincodeCharge').value);
             
@@ -3677,32 +3809,58 @@
                 return;
             }
             
-            BUSINESS_INFO.servicePincodes.push(newPincode);
-            BUSINESS_INFO.pincodeCharges[newPincode] = newCharge;
-            
-            // Clear form
-            document.getElementById('newPincode').value = '';
-            document.getElementById('newPincodeCharge').value = '';
-            
-            // Reload pincodes
-            loadPincodes();
-            showNotification('Pincode added successfully');
+            try {
+                BUSINESS_INFO.servicePincodes.push(newPincode);
+                BUSINESS_INFO.pincodeCharges[newPincode] = newCharge;
+                
+                await businessInfoAPI.update(BUSINESS_INFO, adminToken);
+                
+                // Clear form
+                document.getElementById('newPincode').value = '';
+                document.getElementById('newPincodeCharge').value = '';
+                
+                // Reload pincodes
+                loadPincodes();
+                showNotification('Pincode added successfully');
+            } catch (error) {
+                showNotification('Error adding pincode', 'error');
+            }
         }
 
-        function updatePincodeCharge(pincode, charge) {
-            BUSINESS_INFO.pincodeCharges[pincode] = parseInt(charge);
-            showNotification('Delivery charge updated');
+        async function updatePincodeCharge(pincode, charge) {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
+            try {
+                BUSINESS_INFO.pincodeCharges[pincode] = parseInt(charge);
+                await businessInfoAPI.update(BUSINESS_INFO, adminToken);
+                showNotification('Delivery charge updated');
+            } catch (error) {
+                showNotification('Error updating charge', 'error');
+            }
         }
 
-        function removePincode(pincode) {
+        async function removePincode(pincode) {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
+            }
+            
             if (confirm('Are you sure you want to remove this pincode?')) {
-                const index = BUSINESS_INFO.servicePincodes.indexOf(pincode);
-                if (index !== -1) {
-                    BUSINESS_INFO.servicePincodes.splice(index, 1);
-                    delete BUSINESS_INFO.pincodeCharges[pincode];
-                    loadPincodes();
-                    showNotification('Pincode removed successfully');
-                } 
+                try {
+                    const index = BUSINESS_INFO.servicePincodes.indexOf(pincode);
+                    if (index !== -1) {
+                        BUSINESS_INFO.servicePincodes.splice(index, 1);
+                        delete BUSINESS_INFO.pincodeCharges[pincode];
+                        await businessInfoAPI.update(BUSINESS_INFO, adminToken);
+                        loadPincodes();
+                        showNotification('Pincode removed successfully');
+                    }
+                } catch (error) {
+                    showNotification('Error removing pincode', 'error');
+                }
             }
         }
 
@@ -3782,16 +3940,11 @@
             }
         }
 
-        function updateStock(productId, newStock) {
-            // Find product
-            let product = null;
-            
-            for (const category in PRODUCTS) {
-                product = PRODUCTS[category].find(p => p.id === productId);
-                if (product) break;
+        async function updateStock(productId, newStock) {
+            if (!adminToken) {
+                showNotification('Please login first', 'error');
+                return;
             }
-            
-            if (!product) return;
             
             const stockValue = parseInt(newStock);
             
@@ -3800,16 +3953,30 @@
                 return;
             }
             
-            product.stock = stockValue;
-            
-            // Reload stock management
-            loadStockManagement();
-            
-            // Reload products to update stock status
-            loadProducts(currentCategory);
-            
-            showNotification('Stock updated successfully');
+            try {
+                await productsAPI.updateStock(productId, stockValue, adminToken);
+                
+                // Reload all products
+                await loadAllProducts();
+                
+                // Reload stock management
+                loadStockManagement();
+                
+                // Reload products to update stock status
+                loadProducts(currentCategory);
+                
+                showNotification('Stock updated successfully');
+            } catch (error) {
+                showNotification('Error updating stock', 'error');
+            }
         }
     </script>
+    <!-- API Scripts -->
+    <script>
+        // Set API base URL - Update this with your Railway backend URL
+        window.API_BASE_URL = 'https://your-railway-app.railway.app/api';
+        // For local development, use: window.API_BASE_URL = 'http://localhost:5000/api';
+    </script>
+    <script src="js/api.js"></script>
 </body>
 </html>
